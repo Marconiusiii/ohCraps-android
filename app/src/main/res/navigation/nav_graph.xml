@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	app:startDestination="@id/strategiesFragment">
+
+	<fragment
+		android:id="@+id/strategiesFragment"
+		android:name="com.marconius.ohcraps.ui.StrategiesFragment"
+		android:label="@string/app_name" />
+
+	<fragment
+		android:id="@+id/rulesFragment"
+		android:name="com.marconius.ohcraps.ui.RulesFragment"
+		android:label="@string/title_rules" />
+
+	<fragment
+		android:id="@+id/aboutFragment"
+		android:name="com.marconius.ohcraps.ui.AboutFragment"
+		android:label="@string/title_about" />
+
+</navigation>

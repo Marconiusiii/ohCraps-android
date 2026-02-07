@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
 	<string name="app_name">Oh Craps!</string>
-	<string name="title_rules">Rules</string>
-	<string name="title_about">About</string>
+
+<string name="tab_strategies">Strategies</string>
+<string name="tab_rules">Rules</string>
+<string name="tab_about">About</string>
+
+<string name="title_rules">Rules</string>
+<string name="title_about">About</string>
+
 </resources>
