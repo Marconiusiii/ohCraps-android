@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<dimen name="screenPadding">16dp</dimen>
+	<dimen name="sectionSpacing">12dp</dimen>
+	<dimen name="controlSpacing">8dp</dimen>
+	<dimen name="listItemPaddingVertical">12dp</dimen>
+	<dimen name="listItemPaddingHorizontal">16dp</dimen>
+</resources>
