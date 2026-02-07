@@ -1,11 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<color name="felt_green_dark">#0F3D2E</color>
-	<color name="felt_green_light">#1F6F4A</color>
 
+	<!-- Core text colors -->
 	<color name="text_primary">#FFFFFF</color>
-	<color name="text_secondary">#E0E0E0</color>
+	<color name="text_secondary">#CCCCCC</color>
 
-	<color name="accent_gold">#E6C26E</color>
-	<color name="accent_red">#B00020</color>
+	<!-- Accent -->
+	<color name="accent_gold">#D4AF37</color>
+
+	<!-- Felt background -->
+	<color name="feltGreenDark">#0B3D2E</color>
+	<color name="feltGreenLight">#145A44</color>
+
+	<!-- Alternate naming used by merged resources -->
+	<color name="felt_green_dark">#0B3D2E</color>
+
+	<!-- Chip rail -->
+	<color name="chipRailDark">#2B1B0E</color>
+	<color name="chipRailLight">#4A2E1A</color>
+
+	<!-- Surface / background helpers -->
+	<color name="surface_dark">#121212</color>
+	<color name="surface_light">#1E1E1E</color>
+
+	<!-- Divider / subtle UI elements -->
+	<color name="divider">#2A2A2A</color>
+
 </resources>
