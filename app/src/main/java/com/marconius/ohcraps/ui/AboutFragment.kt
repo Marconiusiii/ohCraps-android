@@ -3,6 +3,10 @@ package com.marconius.ohcraps.ui
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.method.LinkMovementMethod
+import android.text.style.URLSpan
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
@@ -34,27 +38,27 @@ class AboutFragment : Fragment(R.layout.fragment_about) {
 
 		contentContainer.addView(createHeadingView(getString(R.string.about_references_heading)))
 		contentContainer.addView(createParagraphView(aboutReferenceIntro))
-		addLinkButtons(aboutReferenceLinks)
+		addLinkTextViews(aboutReferenceLinks)
 
 		contentContainer.addView(createHeadingView(getString(R.string.about_credits_heading)))
 		for (paragraph in aboutCreditsParagraphs) {
 			contentContainer.addView(createParagraphView(paragraph))
 		}
-		addLinkButtons(aboutCreditsLinks)
+		addLinkTextViews(aboutCreditsLinks)
 
 		contentContainer.addView(createHeadingView(getString(R.string.about_responsible_heading)))
 		for (paragraph in aboutResponsibleGamblingParagraphs) {
 			contentContainer.addView(createParagraphView(paragraph))
 		}
-		addLinkButtons(aboutResponsibleGamblingLinks)
+		addLinkTextViews(aboutResponsibleGamblingLinks)
 
 		contentContainer.addView(createFeedbackButton())
 		contentContainer.addView(createFooterView())
 	}
 
-	private fun addLinkButtons(links: List<AboutLink>) {
+	private fun addLinkTextViews(links: List<AboutLink>) {
 		for (link in links) {
-			contentContainer.addView(createExternalLinkButton(link))
+			contentContainer.addView(createExternalLinkTextView(link))
 		}
 	}
 
@@ -88,20 +92,24 @@ class AboutFragment : Fragment(R.layout.fragment_about) {
 		}
 	}
 
-	private fun createExternalLinkButton(link: AboutLink): MaterialButton {
-		return MaterialButton(requireContext(), null, com.google.android.material.R.attr.materialButtonOutlinedStyle).apply {
+	private fun createExternalLinkTextView(link: AboutLink): TextView {
+		return TextView(requireContext()).apply {
 			layoutParams = LinearLayout.LayoutParams(
-				ViewGroup.LayoutParams.WRAP_CONTENT,
+				ViewGroup.LayoutParams.MATCH_PARENT,
 				ViewGroup.LayoutParams.WRAP_CONTENT
 			).apply {
 				bottomMargin = resources.getDimensionPixelSize(R.dimen.controlSpacing)
 			}
-			text = link.title
-			isAllCaps = false
-			contentDescription = link.title
-			setOnClickListener {
-				openExternalLink(link.url)
+			setTextAppearance(R.style.TextAppearance_OhCraps_Body)
+			setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
+			paintFlags = paintFlags or android.graphics.Paint.UNDERLINE_TEXT_FLAG
+			setLinkTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
+			movementMethod = LinkMovementMethod.getInstance()
+
+			val linkedText = SpannableString(link.title).apply {
+				setSpan(URLSpan(link.url), 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
 			}
+			text = linkedText
 		}
 	}
 
@@ -140,18 +148,6 @@ class AboutFragment : Fragment(R.layout.fragment_about) {
 			setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
 			alpha = 0.8f
 			text = footerText
-		}
-	}
-
-	private fun openExternalLink(url: String) {
-		val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-		if (intent.resolveActivity(requireContext().packageManager) != null) {
-			startActivity(intent)
-		} else {
-			AlertDialog.Builder(requireContext())
-				.setMessage(R.string.about_no_browser_app)
-				.setPositiveButton(android.R.string.ok, null)
-				.show()
 		}
 	}
 
