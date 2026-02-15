@@ -1,0 +1,7 @@
+./gradlew installDebug
+adb logcat
+
+
+./gradlew installDebug
+adb logcat
+ -i > crashy.txt 2>&1
