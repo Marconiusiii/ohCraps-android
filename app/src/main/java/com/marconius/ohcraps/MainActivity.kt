@@ -23,6 +23,7 @@ class MainActivity : AppCompatActivity() {
 		navController.addOnDestinationChangedListener { _, destination, _ ->
 			val isTopLevel = destination.id == R.id.strategiesFragment ||
 				destination.id == R.id.rulesFragment ||
+				destination.id == R.id.createStrategyFragment ||
 				destination.id == R.id.aboutFragment
 			bottomNav.visibility = if (isTopLevel) View.VISIBLE else View.GONE
 		}

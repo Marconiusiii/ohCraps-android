@@ -11,22 +11,16 @@
 		android:id="@+id/screenTitle"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:text="@string/title_rules"
+		android:text="@string/title_create_strategy"
 		android:textAppearance="@style/TextAppearance.OhCraps.ScreenTitle"
 		android:accessibilityHeading="true"
 		android:layout_marginBottom="@dimen/controlSpacing" />
 
-	<ScrollView
+	<TextView
+		android:id="@+id/placeholderBody"
 		android:layout_width="match_parent"
-		android:layout_height="0dp"
-		android:layout_weight="1">
-
-		<LinearLayout
-			android:id="@+id/sectionsContainer"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:orientation="vertical"
-			android:paddingBottom="@dimen/screenPadding" />
-	</ScrollView>
+		android:layout_height="wrap_content"
+		android:text="@string/create_strategy_placeholder"
+		android:textAppearance="@style/TextAppearance.OhCraps.Body" />
 
 </LinearLayout>

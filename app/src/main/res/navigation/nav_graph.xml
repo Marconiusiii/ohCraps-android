@@ -20,6 +20,11 @@
 		android:label="@string/title_rules" />
 
 	<fragment
+		android:id="@+id/createStrategyFragment"
+		android:name="com.marconius.ohcraps.ui.CreateStrategyFragment"
+		android:label="@string/title_create_strategy" />
+
+	<fragment
 		android:id="@+id/aboutFragment"
 		android:name="com.marconius.ohcraps.ui.AboutFragment"
 		android:label="@string/title_about" />
