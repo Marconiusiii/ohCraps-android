@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:orientation="vertical"
@@ -16,11 +17,200 @@
 		android:accessibilityHeading="true"
 		android:layout_marginBottom="@dimen/controlSpacing" />
 
-	<TextView
-		android:id="@+id/placeholderBody"
+	<com.google.android.material.button.MaterialButtonToggleGroup
+		android:id="@+id/modeToggleGroup"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:text="@string/create_strategy_placeholder"
-		android:textAppearance="@style/TextAppearance.OhCraps.Body" />
+		app:singleSelection="true"
+		app:selectionRequired="true"
+		android:layout_marginBottom="@dimen/controlSpacing">
+
+		<com.google.android.material.button.MaterialButton
+			android:id="@+id/createModeButton"
+			style="@style/Widget.Material3.Button.OutlinedButton"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:text="@string/create_mode_label" />
+
+		<com.google.android.material.button.MaterialButton
+			android:id="@+id/myStrategiesModeButton"
+			style="@style/Widget.Material3.Button.OutlinedButton"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:text="@string/my_strategies_mode_label" />
+	</com.google.android.material.button.MaterialButtonToggleGroup>
+
+	<FrameLayout
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1">
+
+		<ScrollView
+			android:id="@+id/createFormContainer"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent">
+
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="vertical"
+				android:paddingBottom="@dimen/screenPadding">
+
+				<TextView
+					android:id="@+id/requiredHint"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:text="@string/create_required_hint"
+					android:textAppearance="@style/TextAppearance.OhCraps.ListItem"
+					android:layout_marginBottom="@dimen/controlSpacing" />
+
+				<com.google.android.material.textfield.TextInputLayout
+					android:id="@+id/nameInputLayout"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:hint="@string/create_name_label"
+					android:layout_marginBottom="@dimen/controlSpacing">
+
+					<com.google.android.material.textfield.TextInputEditText
+						android:id="@+id/nameInput"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:inputType="textCapSentences"
+						android:imeOptions="actionNext" />
+				</com.google.android.material.textfield.TextInputLayout>
+
+				<com.google.android.material.textfield.TextInputLayout
+					android:id="@+id/buyInInputLayout"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:hint="@string/create_buy_in_label"
+					android:layout_marginBottom="@dimen/controlSpacing">
+
+					<com.google.android.material.textfield.TextInputEditText
+						android:id="@+id/buyInInput"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:inputType="text"
+						android:imeOptions="actionNext" />
+				</com.google.android.material.textfield.TextInputLayout>
+
+				<com.google.android.material.textfield.TextInputLayout
+					android:id="@+id/tableMinimumInputLayout"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:hint="@string/create_table_minimum_label"
+					android:layout_marginBottom="@dimen/controlSpacing">
+
+					<com.google.android.material.textfield.TextInputEditText
+						android:id="@+id/tableMinimumInput"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:inputType="text"
+						android:imeOptions="actionNext" />
+				</com.google.android.material.textfield.TextInputLayout>
+
+				<com.google.android.material.textfield.TextInputLayout
+					android:id="@+id/stepsInputLayout"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:hint="@string/create_steps_label"
+					android:layout_marginBottom="@dimen/controlSpacing">
+
+					<com.google.android.material.textfield.TextInputEditText
+						android:id="@+id/stepsInput"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:minLines="4"
+						android:gravity="top|start"
+						android:inputType="textMultiLine|textCapSentences"
+						android:imeOptions="actionNext" />
+				</com.google.android.material.textfield.TextInputLayout>
+
+				<com.google.android.material.textfield.TextInputLayout
+					android:id="@+id/notesInputLayout"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:hint="@string/create_notes_label"
+					android:layout_marginBottom="@dimen/controlSpacing">
+
+					<com.google.android.material.textfield.TextInputEditText
+						android:id="@+id/notesInput"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:minLines="3"
+						android:gravity="top|start"
+						android:inputType="textMultiLine|textCapSentences"
+						android:imeOptions="actionNext" />
+				</com.google.android.material.textfield.TextInputLayout>
+
+				<com.google.android.material.textfield.TextInputLayout
+					android:id="@+id/creditInputLayout"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:hint="@string/create_credit_label"
+					android:layout_marginBottom="@dimen/controlSpacing">
+
+					<com.google.android.material.textfield.TextInputEditText
+						android:id="@+id/creditInput"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:inputType="textCapSentences"
+						android:imeOptions="actionDone" />
+				</com.google.android.material.textfield.TextInputLayout>
+
+				<LinearLayout
+					android:id="@+id/createButtonsRow"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:orientation="horizontal"
+					android:layout_marginTop="@dimen/controlSpacing">
+
+					<com.google.android.material.button.MaterialButton
+						android:id="@+id/primaryActionButton"
+						style="@style/Widget.Material3.Button.OutlinedButton"
+						android:layout_width="0dp"
+						android:layout_height="wrap_content"
+						android:layout_weight="1"
+						android:text="@string/create_save_strategy" />
+
+					<com.google.android.material.button.MaterialButton
+						android:id="@+id/secondaryActionButton"
+						style="@style/Widget.Material3.Button.OutlinedButton"
+						android:layout_width="0dp"
+						android:layout_height="wrap_content"
+						android:layout_weight="1"
+						android:layout_marginStart="@dimen/controlSpacing"
+						android:text="@string/create_reset_form" />
+				</LinearLayout>
+			</LinearLayout>
+		</ScrollView>
+
+		<LinearLayout
+			android:id="@+id/myStrategiesContainer"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:orientation="vertical"
+			android:visibility="gone">
+
+			<TextView
+				android:id="@+id/emptyMyStrategiesText"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="@string/my_strategies_empty"
+				android:textAppearance="@style/TextAppearance.OhCraps.Body"
+				android:visibility="gone"
+				android:layout_marginBottom="@dimen/controlSpacing" />
+
+			<androidx.recyclerview.widget.RecyclerView
+				android:id="@+id/myStrategiesRecyclerView"
+				android:layout_width="match_parent"
+				android:layout_height="0dp"
+				android:layout_weight="1"
+				android:clipToPadding="false"
+				android:paddingBottom="@dimen/screenPadding" />
+		</LinearLayout>
+	</FrameLayout>
 
 </LinearLayout>

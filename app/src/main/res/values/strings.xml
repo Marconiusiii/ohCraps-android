@@ -12,7 +12,40 @@
 	<string name="title_create_strategy">Create Strategy</string>
 	<string name="title_about">About</string>
 
-	<string name="create_strategy_placeholder">Create Strategy workflow is next in Slice 3.</string>
+	<string name="create_mode_label">Create Strategy</string>
+	<string name="my_strategies_mode_label">My Strategies</string>
+	<string name="create_required_hint">All fields are required except Notes and Credit.</string>
+	<string name="create_name_label">Strategy Name</string>
+	<string name="create_buy_in_label">Buy-in Amount</string>
+	<string name="create_table_minimum_label">Table Minimum</string>
+	<string name="create_steps_label">Steps</string>
+	<string name="create_notes_label">Notes</string>
+	<string name="create_credit_label">Credit</string>
+	<string name="create_save_strategy">Save Strategy</string>
+	<string name="create_reset_form">Reset Form</string>
+	<string name="create_save_changes">Save Changes</string>
+	<string name="create_cancel_editing">Cancel Editing</string>
+	<string name="create_error_name">Please enter a strategy name.</string>
+	<string name="create_error_buy_in">Please enter a buy-in amount.</string>
+	<string name="create_error_table_minimum">Please enter a table minimum.</string>
+	<string name="create_error_steps">Please enter at least one step.</string>
+
+	<string name="my_strategies_empty">No saved strategies yet. Use the Create Strategy mode to add one.</string>
+	<string name="user_strategy_actions">Actions</string>
+	<string name="user_strategy_action_edit">Edit</string>
+	<string name="user_strategy_action_duplicate">Duplicate</string>
+	<string name="user_strategy_action_submit">Submit</string>
+	<string name="user_strategy_action_resubmit">Resubmit</string>
+	<string name="user_strategy_action_delete">Delete</string>
+	<string name="user_strategy_delete_title">Delete %1$s?</string>
+	<string name="user_strategy_delete_message">This deletes the strategy from your device.</string>
+	<string name="user_strategy_submission_subject">Oh Craps Strategy Submission: %1$s</string>
+	<string name="user_strategy_no_email_app">No email app is available on this device.</string>
+	<string name="user_strategy_submitted">Submitted</string>
+	<string name="user_strategy_not_submitted">Not submitted</string>
+	<string name="user_strategy_meta_template">Created %1$s, %2$s</string>
+	<string name="user_strategy_accessibility_summary">%1$s. Created %2$s. %3$s.</string>
+	<string name="user_strategy_actions_for">Actions for %1$s</string>
 
 	<string name="search_hint">Search strategies</string>
 	<string name="search_accessibility_label">Search strategies</string>
