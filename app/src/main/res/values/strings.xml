@@ -3,11 +3,33 @@
 
 	<string name="app_name">Oh Craps!</string>
 
-<string name="tab_strategies">Strategies</string>
-<string name="tab_rules">Rules</string>
-<string name="tab_about">About</string>
+	<string name="tab_strategies">Strategies</string>
+	<string name="tab_rules">Rules</string>
+	<string name="tab_about">About</string>
 
-<string name="title_rules">Rules</string>
-<string name="title_about">About</string>
+	<string name="title_rules">Rules</string>
+	<string name="title_about">About</string>
+
+	<string name="search_hint">Search strategies</string>
+	<string name="search_accessibility_label">Search strategies</string>
+	<string name="filter_any">Any</string>
+	<string name="filter_table_default">Table Minimum: Any</string>
+	<string name="filter_buy_in_default">Buy-in: Any</string>
+	<string name="filter_table_label">Table Minimum: %1$s</string>
+	<string name="filter_buy_in_label">Buy-in: %1$s</string>
+	<string name="filter_table_accessibility">Choose table minimum filter</string>
+	<string name="filter_buy_in_accessibility">Choose buy-in filter</string>
+	<string name="no_strategies_found">No strategies match your current filters.</string>
+
+	<string name="back_button">Back</string>
+	<string name="notes_heading">Notes</string>
+	<string name="credit_heading">Credit</string>
+	<string name="steps_heading">Steps</string>
+	<string name="strategy_not_found">Strategy not found</string>
+	<string name="unknown_value">Unknown</string>
+	<string name="kv_buy_in">Buy-in: %1$s</string>
+	<string name="kv_table_minimum">Table Minimum: %1$s</string>
+	<string name="step_line">%1$d. %2$s</string>
+	<string name="bullet_line">- %1$s</string>
 
 </resources>

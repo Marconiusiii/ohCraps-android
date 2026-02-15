@@ -1,17 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:orientation="vertical"
-	android:padding="16dp">
+	android:background="@drawable/bg_felt"
+	android:padding="@dimen/screenPadding">
 
 	<TextView
 		android:id="@+id/screenTitle"
-		android:layout_width="wrap_content"
+		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:text="@string/app_name"
 		android:textAppearance="@style/TextAppearance.OhCraps.ScreenTitle"
-		android:accessibilityHeading="true" />
+		android:accessibilityHeading="true"
+		android:layout_marginBottom="@dimen/controlSpacing" />
+
+	<com.google.android.material.textfield.TextInputLayout
+		android:id="@+id/searchInputLayout"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:hint="@string/search_hint"
+		app:boxBackgroundMode="filled"
+		app:boxBackgroundColor="@color/surface_light"
+		app:hintTextColor="@color/text_secondary"
+		android:layout_marginBottom="@dimen/controlSpacing">
+
+		<com.google.android.material.textfield.TextInputEditText
+			android:id="@+id/searchInput"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:importantForAutofill="no"
+			android:inputType="text"
+			android:imeOptions="actionSearch"
+			android:textColor="@color/text_primary"
+			android:textColorHint="@color/text_secondary"
+			android:contentDescription="@string/search_accessibility_label" />
+	</com.google.android.material.textfield.TextInputLayout>
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:layout_marginBottom="@dimen/controlSpacing">
+
+		<com.google.android.material.button.MaterialButton
+			android:id="@+id/tableFilterButton"
+			style="@style/Widget.Material3.Button.OutlinedButton"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:text="@string/filter_table_default"
+			android:layout_marginEnd="@dimen/controlSpacing"
+			android:contentDescription="@string/filter_table_accessibility" />
+
+		<com.google.android.material.button.MaterialButton
+			android:id="@+id/buyInFilterButton"
+			style="@style/Widget.Material3.Button.OutlinedButton"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:text="@string/filter_buy_in_default"
+			android:contentDescription="@string/filter_buy_in_accessibility" />
+	</LinearLayout>
+
+	<TextView
+		android:id="@+id/emptyMessage"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:text="@string/no_strategies_found"
+		android:textAppearance="@style/TextAppearance.OhCraps.Body"
+		android:visibility="gone"
+		android:layout_marginBottom="@dimen/controlSpacing" />
+
+	<androidx.recyclerview.widget.RecyclerView
+		android:id="@+id/strategiesRecyclerView"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1"
+		android:clipToPadding="false"
+		android:paddingBottom="@dimen/screenPadding"
+		android:importantForAccessibility="yes" />
 
 </LinearLayout>

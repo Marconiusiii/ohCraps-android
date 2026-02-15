@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/strategyName"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:paddingTop="@dimen/listItemPaddingVertical"
+	android:paddingBottom="@dimen/listItemPaddingVertical"
+	android:paddingStart="@dimen/listItemPaddingHorizontal"
+	android:paddingEnd="@dimen/listItemPaddingHorizontal"
+	android:textAppearance="@style/TextAppearance.OhCraps.Body"
+	android:background="@drawable/bg_chip_rail"
+	android:layout_marginBottom="@dimen/controlSpacing"
+	android:clickable="true"
+	android:focusable="true" />

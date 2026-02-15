@@ -1,6 +1,7 @@
 package com.marconius.ohcraps
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -16,7 +17,14 @@ class MainActivity : AppCompatActivity() {
 			supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment
 		val navController = navHost.navController
 
-		findViewById<BottomNavigationView>(R.id.bottomNav)
-			.setupWithNavController(navController)
+		val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNav)
+		bottomNav.setupWithNavController(navController)
+
+		navController.addOnDestinationChangedListener { _, destination, _ ->
+			val isTopLevel = destination.id == R.id.strategiesFragment ||
+				destination.id == R.id.rulesFragment ||
+				destination.id == R.id.aboutFragment
+			bottomNav.visibility = if (isTopLevel) View.VISIBLE else View.GONE
+		}
 	}
 }

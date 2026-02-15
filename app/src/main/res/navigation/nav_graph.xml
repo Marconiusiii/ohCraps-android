@@ -7,7 +7,12 @@
 	<fragment
 		android:id="@+id/strategiesFragment"
 		android:name="com.marconius.ohcraps.ui.StrategiesFragment"
-		android:label="@string/app_name" />
+		android:label="@string/app_name">
+
+		<action
+			android:id="@+id/action_strategiesFragment_to_strategyDetailFragment"
+			app:destination="@id/strategyDetailFragment" />
+	</fragment>
 
 	<fragment
 		android:id="@+id/rulesFragment"
@@ -18,5 +23,19 @@
 		android:id="@+id/aboutFragment"
 		android:name="com.marconius.ohcraps.ui.AboutFragment"
 		android:label="@string/title_about" />
+
+	<fragment
+		android:id="@+id/strategyDetailFragment"
+		android:name="com.marconius.ohcraps.ui.StrategyDetailFragment"
+		android:label="@string/app_name">
+
+		<argument
+			android:name="strategyAssetFileName"
+			app:argType="string" />
+
+		<argument
+			android:name="strategyId"
+			app:argType="string" />
+	</fragment>
 
 </navigation>
