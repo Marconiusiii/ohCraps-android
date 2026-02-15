@@ -48,6 +48,7 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 
 	private var userStrategies: List<UserStrategy> = emptyList()
 	private var editingStrategyId: String? = null
+	private var editingOriginStrategyId: String? = null
 	private var currentMode: Mode = Mode.Create
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -133,7 +134,7 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 			if (editingStrategyId == null) {
 				resetForm()
 			} else {
-				exitEditingMode()
+				showCancelEditingDialog()
 			}
 		}
 	}
@@ -396,12 +397,14 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 
 	private fun exitEditingMode() {
 		editingStrategyId = null
+		editingOriginStrategyId = null
 		updateActionButtonLabels()
 		resetForm()
 	}
 
 	private fun beginEditingStrategy(strategy: UserStrategy) {
 		editingStrategyId = strategy.id
+		editingOriginStrategyId = strategy.id
 		nameInput.setText(strategy.name)
 		buyInInput.setText(strategy.buyIn)
 		tableMinimumInput.setText(strategy.tableMinimum)
@@ -478,24 +481,68 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 	private fun submitStrategy(strategy: UserStrategy) {
 		val subject = getString(R.string.user_strategy_submission_subject, strategy.name)
 		val body = buildSubmissionBody(strategy)
-		val encodedSubject = android.net.Uri.encode(subject)
-		val encodedBody = android.net.Uri.encode(body)
-		val emailUri = android.net.Uri.parse("mailto:marco@marconius.com?subject=$encodedSubject&body=$encodedBody")
-
-		val intent = android.content.Intent(android.content.Intent.ACTION_SENDTO).apply {
-			data = emailUri
-		}
-
-		if (intent.resolveActivity(requireContext().packageManager) != null) {
-			startActivity(intent)
-			userStrategies = UserStrategyStore.markSubmitted(requireContext(), userStrategies, strategy.id)
-			renderUserStrategies()
-		} else {
+		val didOpenComposer = openEmailComposer(
+			subject = subject,
+			body = body,
+			recipient = submissionRecipient
+		)
+		if (!didOpenComposer) {
 			AlertDialog.Builder(requireContext())
 				.setMessage(R.string.user_strategy_no_email_app)
 				.setPositiveButton(android.R.string.ok, null)
 				.show()
+			return
 		}
+
+		userStrategies = UserStrategyStore.markSubmitted(requireContext(), userStrategies, strategy.id)
+		renderUserStrategies()
+	}
+
+	private fun openEmailComposer(subject: String, body: String, recipient: String): Boolean {
+		val encodedSubject = android.net.Uri.encode(subject)
+		val encodedBody = android.net.Uri.encode(body)
+		val emailUri = android.net.Uri.parse("mailto:$recipient?subject=$encodedSubject&body=$encodedBody")
+
+		val sendToIntent = android.content.Intent(android.content.Intent.ACTION_SENDTO).apply {
+			data = emailUri
+		}
+		if (sendToIntent.resolveActivity(requireContext().packageManager) != null) {
+			startActivity(sendToIntent)
+			return true
+		}
+
+		val sendIntent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+			type = "message/rfc822"
+			putExtra(android.content.Intent.EXTRA_EMAIL, arrayOf(recipient))
+			putExtra(android.content.Intent.EXTRA_SUBJECT, subject)
+			putExtra(android.content.Intent.EXTRA_TEXT, body)
+		}
+		if (sendIntent.resolveActivity(requireContext().packageManager) != null) {
+			startActivity(
+				android.content.Intent.createChooser(
+					sendIntent,
+					getString(R.string.user_strategy_email_chooser_title)
+				)
+			)
+			return true
+		}
+
+		return false
+	}
+
+	private fun showCancelEditingDialog() {
+		val strategyIdToRestore = editingOriginStrategyId
+		AlertDialog.Builder(requireContext())
+			.setTitle(R.string.create_cancel_changes_title)
+			.setPositiveButton(R.string.create_cancel_changes_confirm) { _, _ ->
+				exitEditingMode()
+				renderMyStrategiesMode()
+				if (!strategyIdToRestore.isNullOrBlank()) {
+					restoreFocusToUserStrategy(strategyIdToRestore)
+				}
+			}
+			.setNegativeButton(R.string.create_cancel_changes_keep_editing, null)
+			.show()
 	}
 
 	private fun buildSubmissionBody(strategy: UserStrategy): String {
@@ -530,14 +577,25 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 	}
 
 	private fun restoreFocusToUserStrategy(strategyId: String) {
-		loadUserStrategies()
-		renderMyStrategiesMode()
+		if (currentMode != Mode.MyStrategies) {
+			renderMyStrategiesMode()
+		}
 		val position = userStrategyListAdapter.findPositionById(strategyId) ?: return
 		myStrategiesRecyclerView.scrollToPosition(position)
 		myStrategiesRecyclerView.post {
 			val viewHolder = myStrategiesRecyclerView.findViewHolderForAdapterPosition(position) ?: return@post
 			viewHolder.itemView.requestFocus()
+			viewHolder.itemView.performAccessibilityAction(
+				android.view.accessibility.AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS,
+				null
+			)
 			viewHolder.itemView.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED)
+			viewHolder.itemView.postDelayed({
+				viewHolder.itemView.performAccessibilityAction(
+					android.view.accessibility.AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS,
+					null
+				)
+			}, 180L)
 		}
 	}
 
@@ -561,5 +619,6 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 	companion object {
 		const val userStrategyIdArg = "userStrategyId"
 		const val focusUserStrategyIdKey = "focusUserStrategyId"
+		private const val submissionRecipient = "marco@marconius.com"
 	}
 }

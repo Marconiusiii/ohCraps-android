@@ -32,6 +32,9 @@
 	<string name="create_reset_form">Reset Form</string>
 	<string name="create_save_changes">Save Changes</string>
 	<string name="create_cancel_editing">Cancel Editing</string>
+	<string name="create_cancel_changes_title">Cancel Changes?</string>
+	<string name="create_cancel_changes_confirm">Yes, Cancel</string>
+	<string name="create_cancel_changes_keep_editing">Keep Editing</string>
 	<string name="create_error_name">Please enter a strategy name.</string>
 	<string name="create_error_buy_in">Please enter a buy-in amount.</string>
 	<string name="create_error_table_minimum">Please enter a table minimum.</string>
@@ -52,7 +55,8 @@
 	<string name="close_button">Close</string>
 	<string name="user_strategy_delete_title">Delete %1$s?</string>
 	<string name="user_strategy_delete_message">This deletes the strategy from your device.</string>
-	<string name="user_strategy_submission_subject">Oh Craps Strategy Submission: %1$s</string>
+	<string name="user_strategy_submission_subject">Oh Craps! Android Strategy Submission - %1$s</string>
+	<string name="user_strategy_email_chooser_title">Send strategy with</string>
 	<string name="user_strategy_no_email_app">No email app is available on this device.</string>
 	<string name="user_strategy_submitted">Submitted</string>
 	<string name="user_strategy_not_submitted">Not submitted</string>
