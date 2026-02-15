@@ -12,6 +12,13 @@
 	<string name="title_create_strategy">Create Strategy</string>
 	<string name="create_editing_title">Editing %1$s</string>
 	<string name="title_about">About</string>
+	<string name="about_references_heading">References</string>
+	<string name="about_credits_heading">App Credits</string>
+	<string name="about_responsible_heading">Responsible Gambling</string>
+	<string name="about_feedback_button">Submit App Feedback</string>
+	<string name="about_feedback_subject">Oh Craps! App Feedback</string>
+	<string name="about_footer_template">Oh Craps! version %1$s. ©%2$d</string>
+	<string name="about_no_browser_app">No browser app is available on this device.</string>
 
 	<string name="create_mode_label">Create Strategy</string>
 	<string name="my_strategies_mode_label">My Strategies</string>
