@@ -1,28 +1,26 @@
 package com.marconius.ohcraps.ui
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
-import android.widget.PopupMenu
+import android.view.accessibility.AccessibilityEvent
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.AccessibilityDelegateCompat
+import androidx.core.os.bundleOf
+import androidx.core.view.ViewCompat
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.marconius.ohcraps.R
-import java.text.DateFormat
-import java.util.Date
-import java.util.Locale
 
 class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 
-	private lateinit var modeToggleGroup: MaterialButtonToggleGroup
 	private lateinit var createModeButton: MaterialButton
 	private lateinit var myStrategiesModeButton: MaterialButton
 
@@ -47,25 +45,36 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 	private lateinit var myStrategiesRecyclerView: RecyclerView
 
 	private lateinit var userStrategyListAdapter: UserStrategyListAdapter
-	private var userStrategies: List<UserStrategy> = emptyList()
 
+	private var userStrategies: List<UserStrategy> = emptyList()
 	private var editingStrategyId: String? = null
+	private var currentMode: Mode = Mode.Create
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		bindViews(view)
-		setupModeToggle()
-		setupFormValidationReset()
-		setupActions()
+		setupModeButtons()
+		setupFormFieldListeners()
+		setupFormButtons()
 		setupMyStrategiesList()
+		observeFocusRestoreRequests()
+		installFieldAccessibilityDelegates()
 		loadUserStrategies()
 		renderCreateMode()
 	}
 
+	override fun onResume() {
+		super.onResume()
+		loadUserStrategies()
+		if (currentMode == Mode.MyStrategies) {
+			renderMyStrategiesMode()
+		}
+	}
+
 	private fun bindViews(rootView: View) {
-		modeToggleGroup = rootView.findViewById(R.id.modeToggleGroup)
 		createModeButton = rootView.findViewById(R.id.createModeButton)
 		myStrategiesModeButton = rootView.findViewById(R.id.myStrategiesModeButton)
+
 		createFormContainer = rootView.findViewById(R.id.createFormContainer)
 		myStrategiesContainer = rootView.findViewById(R.id.myStrategiesContainer)
 		emptyMyStrategiesText = rootView.findViewById(R.id.emptyMyStrategiesText)
@@ -87,29 +96,31 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 		myStrategiesRecyclerView = rootView.findViewById(R.id.myStrategiesRecyclerView)
 	}
 
-	private fun setupModeToggle() {
-		modeToggleGroup.check(R.id.createModeButton)
-		modeToggleGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
-			if (!isChecked) {
-				return@addOnButtonCheckedListener
-			}
-
-			if (checkedId == R.id.createModeButton) {
-				renderCreateMode()
-			} else {
-				renderMyStrategiesMode()
-			}
+	private fun setupModeButtons() {
+		createModeButton.setOnClickListener {
+			renderCreateMode()
+		}
+		myStrategiesModeButton.setOnClickListener {
+			renderMyStrategiesMode()
 		}
 	}
 
-	private fun setupFormValidationReset() {
-		nameInput.doAfterTextChanged { nameInputLayout.error = null }
-		buyInInput.doAfterTextChanged { buyInInputLayout.error = null }
-		tableMinimumInput.doAfterTextChanged { tableMinimumInputLayout.error = null }
-		stepsInput.doAfterTextChanged { stepsInputLayout.error = null }
+	private fun setupFormFieldListeners() {
+		nameInput.doAfterTextChanged {
+			nameInputLayout.error = null
+		}
+		buyInInput.doAfterTextChanged {
+			buyInInputLayout.error = null
+		}
+		tableMinimumInput.doAfterTextChanged {
+			tableMinimumInputLayout.error = null
+		}
+		stepsInput.doAfterTextChanged {
+			stepsInputLayout.error = null
+		}
 	}
 
-	private fun setupActions() {
+	private fun setupFormButtons() {
 		primaryActionButton.setOnClickListener {
 			if (editingStrategyId == null) {
 				saveNewStrategy()
@@ -127,36 +138,147 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 		}
 	}
 
+	private fun installFieldAccessibilityDelegates() {
+		applyFieldDelegate(
+			fieldView = nameInput,
+			label = getString(R.string.create_name_label),
+			errorProvider = { nameInputLayout.error?.toString() }
+		)
+		applyFieldDelegate(
+			fieldView = buyInInput,
+			label = getString(R.string.create_buy_in_label),
+			errorProvider = { buyInInputLayout.error?.toString() }
+		)
+		applyFieldDelegate(
+			fieldView = tableMinimumInput,
+			label = getString(R.string.create_table_minimum_label),
+			errorProvider = { tableMinimumInputLayout.error?.toString() }
+		)
+		applyFieldDelegate(
+			fieldView = stepsInput,
+			label = getString(R.string.create_steps_label),
+			errorProvider = { stepsInputLayout.error?.toString() }
+		)
+		applyFieldDelegate(
+			fieldView = notesInput,
+			label = getString(R.string.create_notes_label),
+			errorProvider = { null }
+		)
+		applyFieldDelegate(
+			fieldView = creditInput,
+			label = getString(R.string.create_credit_label),
+			errorProvider = { null }
+		)
+	}
+
+	private fun applyFieldDelegate(
+		fieldView: TextInputEditText,
+		label: String,
+		errorProvider: () -> String?
+	) {
+		ViewCompat.setAccessibilityDelegate(fieldView, object : AccessibilityDelegateCompat() {
+			override fun onInitializeAccessibilityNodeInfo(host: View, info: AccessibilityNodeInfoCompat) {
+				super.onInitializeAccessibilityNodeInfo(host, info)
+				val inputText = fieldView.text?.toString()?.trim().orEmpty()
+				val errorText = errorProvider()?.trim().orEmpty()
+				info.hintText = label
+				info.isShowingHintText = inputText.isEmpty()
+				info.text = if (inputText.isEmpty()) label else host.context.getString(
+					R.string.field_text_with_label,
+					label,
+					inputText
+				)
+				if (errorText.isNotEmpty()) {
+					info.error = errorText
+				}
+			}
+		})
+	}
+
 	private fun setupMyStrategiesList() {
 		userStrategyListAdapter = UserStrategyListAdapter(
-			onActionsClicked = { anchor, strategy ->
-				showStrategyActionsMenu(anchor, strategy)
-			},
 			onStrategyClicked = { strategy ->
-				beginEditingStrategy(strategy)
+				openStrategyDetail(strategy)
+			},
+			onLongPressed = { anchor, strategy ->
+				showActionsDialog(anchor, strategy)
 			}
 		)
 		myStrategiesRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 		myStrategiesRecyclerView.adapter = userStrategyListAdapter
 	}
 
-	private fun loadUserStrategies() {
-		userStrategies = UserStrategyStore.load(requireContext())
-		renderUserStrategies()
+	private fun updateModeButtonState() {
+		val createSelected = currentMode == Mode.Create
+		val mySelected = currentMode == Mode.MyStrategies
+
+		createModeButton.isSelected = createSelected
+		myStrategiesModeButton.isSelected = mySelected
+
+		createModeButton.isClickable = !createSelected
+		myStrategiesModeButton.isClickable = !mySelected
+		createModeButton.isFocusable = !createSelected
+		myStrategiesModeButton.isFocusable = !mySelected
+
+		createModeButton.contentDescription = getString(
+			R.string.create_mode_accessibility,
+			getString(R.string.create_mode_position)
+		)
+		myStrategiesModeButton.contentDescription = getString(
+			R.string.my_strategies_mode_accessibility,
+			getString(R.string.my_strategies_mode_position)
+		)
+
+		ViewCompat.setStateDescription(createModeButton, null)
+		ViewCompat.setStateDescription(myStrategiesModeButton, null)
+
+		if (createSelected) {
+			removeModeActionLabel(createModeButton)
+		} else {
+			applyModeActionLabel(createModeButton)
+		}
+
+		if (mySelected) {
+			removeModeActionLabel(myStrategiesModeButton)
+		} else {
+			applyModeActionLabel(myStrategiesModeButton)
+		}
+	}
+
+	private fun applyModeActionLabel(button: MaterialButton) {
+		ViewCompat.replaceAccessibilityAction(
+			button,
+			AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_CLICK,
+			getString(R.string.mode_switch_action)
+		) { _, _ ->
+			button.performClick()
+			true
+		}
+	}
+
+	private fun removeModeActionLabel(button: MaterialButton) {
+		ViewCompat.replaceAccessibilityAction(
+			button,
+			AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_CLICK,
+			null,
+			null
+		)
 	}
 
 	private fun renderCreateMode() {
+		currentMode = Mode.Create
 		createFormContainer.visibility = View.VISIBLE
 		myStrategiesContainer.visibility = View.GONE
-		modeToggleGroup.check(R.id.createModeButton)
 		updateActionButtonLabels()
+		updateModeButtonState()
 	}
 
 	private fun renderMyStrategiesMode() {
+		currentMode = Mode.MyStrategies
 		createFormContainer.visibility = View.GONE
 		myStrategiesContainer.visibility = View.VISIBLE
-		modeToggleGroup.check(R.id.myStrategiesModeButton)
 		renderUserStrategies()
+		updateModeButtonState()
 	}
 
 	private fun updateActionButtonLabels() {
@@ -169,43 +291,51 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 		}
 	}
 
-	private fun validateRequiredFields(): Boolean {
-		val name = nameInput.text?.toString()?.trim().orEmpty()
-		val buyIn = buyInInput.text?.toString()?.trim().orEmpty()
-		val tableMinimum = tableMinimumInput.text?.toString()?.trim().orEmpty()
-		val steps = stepsInput.text?.toString()?.trim().orEmpty()
+	private fun loadUserStrategies() {
+		userStrategies = UserStrategyStore.load(requireContext())
+		renderUserStrategies()
+	}
 
-		nameInputLayout.error = null
-		buyInInputLayout.error = null
-		tableMinimumInputLayout.error = null
-		stepsInputLayout.error = null
+	private fun validateRequiredFields(): List<ValidationIssue> {
+		val issues = mutableListOf<ValidationIssue>()
 
-		if (name.isEmpty()) {
-			nameInputLayout.error = getString(R.string.create_error_name)
-			nameInput.requestFocus()
-			return false
+		if (nameInput.text?.toString()?.trim().isNullOrEmpty()) {
+			issues.add(ValidationIssue(Field.Name, getString(R.string.create_error_name)))
 		}
-		if (buyIn.isEmpty()) {
-			buyInInputLayout.error = getString(R.string.create_error_buy_in)
-			buyInInput.requestFocus()
-			return false
+		if (buyInInput.text?.toString()?.trim().isNullOrEmpty()) {
+			issues.add(ValidationIssue(Field.BuyIn, getString(R.string.create_error_buy_in)))
 		}
-		if (tableMinimum.isEmpty()) {
-			tableMinimumInputLayout.error = getString(R.string.create_error_table_minimum)
-			tableMinimumInput.requestFocus()
-			return false
+		if (tableMinimumInput.text?.toString()?.trim().isNullOrEmpty()) {
+			issues.add(ValidationIssue(Field.TableMinimum, getString(R.string.create_error_table_minimum)))
 		}
-		if (steps.isEmpty()) {
-			stepsInputLayout.error = getString(R.string.create_error_steps)
-			stepsInput.requestFocus()
-			return false
+		if (stepsInput.text?.toString()?.trim().isNullOrEmpty()) {
+			issues.add(ValidationIssue(Field.Steps, getString(R.string.create_error_steps)))
 		}
 
-		return true
+		return issues
+	}
+
+	private fun applyFieldErrors(issues: List<ValidationIssue>) {
+		nameInputLayout.error = issues.firstOrNull { it.field == Field.Name }?.message
+		buyInInputLayout.error = issues.firstOrNull { it.field == Field.BuyIn }?.message
+		tableMinimumInputLayout.error = issues.firstOrNull { it.field == Field.TableMinimum }?.message
+		stepsInputLayout.error = issues.firstOrNull { it.field == Field.Steps }?.message
+	}
+
+	private fun showValidationDialog(issues: List<ValidationIssue>) {
+		val message = issues.joinToString(separator = "\n") { it.message }
+		AlertDialog.Builder(requireContext())
+			.setTitle(R.string.create_error_dialog_title)
+			.setMessage(message)
+			.setPositiveButton(android.R.string.ok, null)
+			.show()
 	}
 
 	private fun saveNewStrategy() {
-		if (!validateRequiredFields()) {
+		val issues = validateRequiredFields()
+		applyFieldErrors(issues)
+		if (issues.isNotEmpty()) {
+			showValidationDialog(issues)
 			return
 		}
 
@@ -221,11 +351,15 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 		)
 
 		resetForm()
+		renderUserStrategies()
 		renderMyStrategiesMode()
 	}
 
 	private fun saveEditedStrategy() {
-		if (!validateRequiredFields()) {
+		val issues = validateRequiredFields()
+		applyFieldErrors(issues)
+		if (issues.isNotEmpty()) {
+			showValidationDialog(issues)
 			return
 		}
 
@@ -243,6 +377,7 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 		)
 
 		exitEditingMode()
+		renderUserStrategies()
 		renderMyStrategiesMode()
 	}
 
@@ -257,7 +392,6 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 		buyInInputLayout.error = null
 		tableMinimumInputLayout.error = null
 		stepsInputLayout.error = null
-		nameInput.requestFocus()
 	}
 
 	private fun exitEditingMode() {
@@ -281,31 +415,47 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 	private fun renderUserStrategies() {
 		val sorted = userStrategies.sortedByDescending { it.dateCreatedMillis }
 		userStrategyListAdapter.submitList(sorted)
-		emptyMyStrategiesText.visibility = if (sorted.isEmpty()) View.VISIBLE else View.GONE
+		emptyMyStrategiesText.text = if (sorted.isEmpty()) {
+			getString(R.string.my_strategies_empty)
+		} else {
+			getString(R.string.my_strategies_count, sorted.size)
+		}
+		emptyMyStrategiesText.visibility = View.VISIBLE
 	}
 
-	private fun showStrategyActionsMenu(anchor: View, strategy: UserStrategy) {
-		val popupMenu = PopupMenu(requireContext(), anchor)
-		popupMenu.menu.add(0, actionEdit, 0, getString(R.string.user_strategy_action_edit))
-		popupMenu.menu.add(0, actionDuplicate, 1, getString(R.string.user_strategy_action_duplicate))
-		popupMenu.menu.add(
-			0,
-			actionSubmit,
-			2,
-			if (strategy.isSubmitted) getString(R.string.user_strategy_action_resubmit) else getString(R.string.user_strategy_action_submit)
+	private fun openStrategyDetail(strategy: UserStrategy) {
+		findNavController().navigate(
+			R.id.strategyDetailFragment,
+			bundleOf(
+				StrategiesFragment.strategyAssetFileArg to "",
+				StrategiesFragment.strategyIdArg to strategy.id,
+				userStrategyIdArg to strategy.id
+			)
 		)
-		popupMenu.menu.add(0, actionDelete, 3, getString(R.string.user_strategy_action_delete))
+	}
 
-		popupMenu.setOnMenuItemClickListener { item ->
-			when (item.itemId) {
-				actionEdit -> beginEditingStrategy(strategy)
-				actionDuplicate -> duplicateStrategy(strategy)
-				actionSubmit -> submitStrategy(strategy)
-				actionDelete -> confirmDeleteStrategy(strategy)
+	private fun showActionsDialog(anchor: View, strategy: UserStrategy) {
+		val options = arrayOf(
+			getString(R.string.user_strategy_action_edit),
+			getString(R.string.user_strategy_action_duplicate),
+			if (strategy.isSubmitted) getString(R.string.user_strategy_action_resubmit) else getString(R.string.user_strategy_action_submit),
+			getString(R.string.user_strategy_action_delete)
+		)
+
+		AlertDialog.Builder(requireContext())
+			.setTitle(getString(R.string.user_strategy_actions_for, strategy.name))
+			.setItems(options) { _, which ->
+				when (which) {
+					0 -> beginEditingStrategy(strategy)
+					1 -> duplicateStrategy(strategy)
+					2 -> submitStrategy(strategy)
+					3 -> confirmDeleteStrategy(strategy)
+				}
 			}
-			true
-		}
-		popupMenu.show()
+			.setNegativeButton(R.string.close_button, null)
+			.show()
+
+		anchor.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED)
 	}
 
 	private fun duplicateStrategy(strategy: UserStrategy) {
@@ -328,11 +478,11 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 	private fun submitStrategy(strategy: UserStrategy) {
 		val subject = getString(R.string.user_strategy_submission_subject, strategy.name)
 		val body = buildSubmissionBody(strategy)
-		val encodedSubject = Uri.encode(subject)
-		val encodedBody = Uri.encode(body)
-		val emailUri = Uri.parse("mailto:marco@marconius.com?subject=$encodedSubject&body=$encodedBody")
+		val encodedSubject = android.net.Uri.encode(subject)
+		val encodedBody = android.net.Uri.encode(body)
+		val emailUri = android.net.Uri.parse("mailto:marco@marconius.com?subject=$encodedSubject&body=$encodedBody")
 
-		val intent = Intent(Intent.ACTION_SENDTO).apply {
+		val intent = android.content.Intent(android.content.Intent.ACTION_SENDTO).apply {
 			data = emailUri
 		}
 
@@ -349,9 +499,6 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 	}
 
 	private fun buildSubmissionBody(strategy: UserStrategy): String {
-		val createdText = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault())
-			.format(Date(strategy.dateCreatedMillis))
-
 		return """
 			Strategy Name:
 			${strategy.name}
@@ -370,16 +517,49 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 
 			Credit:
 			${strategy.credit}
-
-			Created:
-			$createdText
 		""".trimIndent()
 	}
 
-	private companion object {
-		const val actionEdit = 1
-		const val actionDuplicate = 2
-		const val actionSubmit = 3
-		const val actionDelete = 4
+	private fun observeFocusRestoreRequests() {
+		findNavController().currentBackStackEntry?.savedStateHandle
+			?.getLiveData<String>(focusUserStrategyIdKey)
+			?.observe(viewLifecycleOwner) { strategyId ->
+				restoreFocusToUserStrategy(strategyId)
+				findNavController().currentBackStackEntry?.savedStateHandle?.remove<String>(focusUserStrategyIdKey)
+			}
+	}
+
+	private fun restoreFocusToUserStrategy(strategyId: String) {
+		loadUserStrategies()
+		renderMyStrategiesMode()
+		val position = userStrategyListAdapter.findPositionById(strategyId) ?: return
+		myStrategiesRecyclerView.scrollToPosition(position)
+		myStrategiesRecyclerView.post {
+			val viewHolder = myStrategiesRecyclerView.findViewHolderForAdapterPosition(position) ?: return@post
+			viewHolder.itemView.requestFocus()
+			viewHolder.itemView.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED)
+		}
+	}
+
+	private enum class Mode {
+		Create,
+		MyStrategies
+	}
+
+	private enum class Field {
+		Name,
+		BuyIn,
+		TableMinimum,
+		Steps
+	}
+
+	private data class ValidationIssue(
+		val field: Field,
+		val message: String
+	)
+
+	companion object {
+		const val userStrategyIdArg = "userStrategyId"
+		const val focusUserStrategyIdKey = "focusUserStrategyId"
 	}
 }

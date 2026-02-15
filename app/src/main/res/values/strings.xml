@@ -14,6 +14,13 @@
 
 	<string name="create_mode_label">Create Strategy</string>
 	<string name="my_strategies_mode_label">My Strategies</string>
+	<string name="create_mode_position">1 of 2</string>
+	<string name="my_strategies_mode_position">2 of 2</string>
+	<string name="create_mode_accessibility">Create Strategy, %1$s</string>
+	<string name="my_strategies_mode_accessibility">My Strategies, %1$s</string>
+	<string name="mode_selected">Selected</string>
+	<string name="mode_not_selected">Not selected</string>
+	<string name="mode_switch_action">switch</string>
 	<string name="create_required_hint">All fields are required except Notes and Credit.</string>
 	<string name="create_name_label">Strategy Name</string>
 	<string name="create_buy_in_label">Buy-in Amount</string>
@@ -29,14 +36,20 @@
 	<string name="create_error_buy_in">Please enter a buy-in amount.</string>
 	<string name="create_error_table_minimum">Please enter a table minimum.</string>
 	<string name="create_error_steps">Please enter at least one step.</string>
+	<string name="create_error_dialog_title">Missing Required Fields</string>
+	<string name="field_text_with_label">%1$s, %2$s</string>
+	<string name="field_error_content_description">%1$s. Error: %2$s</string>
+	<string name="field_error_spoken">Error: %1$s</string>
 
 	<string name="my_strategies_empty">No saved strategies yet. Use the Create Strategy mode to add one.</string>
+	<string name="my_strategies_count">Saved strategies: %1$d</string>
 	<string name="user_strategy_actions">Actions</string>
 	<string name="user_strategy_action_edit">Edit</string>
 	<string name="user_strategy_action_duplicate">Duplicate</string>
 	<string name="user_strategy_action_submit">Submit</string>
 	<string name="user_strategy_action_resubmit">Resubmit</string>
 	<string name="user_strategy_action_delete">Delete</string>
+	<string name="close_button">Close</string>
 	<string name="user_strategy_delete_title">Delete %1$s?</string>
 	<string name="user_strategy_delete_message">This deletes the strategy from your device.</string>
 	<string name="user_strategy_submission_subject">Oh Craps Strategy Submission: %1$s</string>

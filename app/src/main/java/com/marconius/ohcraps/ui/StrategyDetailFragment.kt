@@ -32,6 +32,7 @@ class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 	private lateinit var stepsContainer: LinearLayout
 
 	private var strategyIdForFocus: String = ""
+	private var focusKeyForBackNavigation: String = StrategiesFragment.focusStrategyIdKey
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
@@ -55,7 +56,7 @@ class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 	private fun bindBackNavigation() {
 		backButton.setOnClickListener {
 			findNavController().previousBackStackEntry?.savedStateHandle?.set(
-				StrategiesFragment.focusStrategyIdKey,
+				focusKeyForBackNavigation,
 				strategyIdForFocus
 			)
 			findNavController().navigateUp()
@@ -65,13 +66,44 @@ class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 	private fun loadStrategy() {
 		val strategyAssetFileName = requireArguments().getString(StrategiesFragment.strategyAssetFileArg).orEmpty()
 		strategyIdForFocus = requireArguments().getString(StrategiesFragment.strategyIdArg).orEmpty()
+		val userStrategyId = requireArguments().getString(CreateStrategyFragment.userStrategyIdArg).orEmpty()
 
 		viewLifecycleOwner.lifecycleScope.launch {
 			val strategy = withContext(Dispatchers.Default) {
-				StrategyRepository.loadStrategyByAssetFileName(requireContext(), strategyAssetFileName)
+				if (userStrategyId.isNotEmpty()) {
+					focusKeyForBackNavigation = CreateStrategyFragment.focusUserStrategyIdKey
+					val userStrategy = UserStrategyStore.load(requireContext()).firstOrNull { it.id == userStrategyId }
+					userStrategy?.let { toDisplayStrategy(it) }
+				} else {
+					focusKeyForBackNavigation = StrategiesFragment.focusStrategyIdKey
+					StrategyRepository.loadStrategyByAssetFileName(requireContext(), strategyAssetFileName)
+				}
 			}
 			renderStrategy(strategy)
 		}
+	}
+
+	private fun toDisplayStrategy(userStrategy: UserStrategy): Strategy {
+		val contentBlocks = userStrategy.steps
+			.split("\n")
+			.map { it.trim() }
+			.filter { it.isNotEmpty() }
+			.map { StrategyContentBlock.Step(it) }
+
+		return Strategy(
+			id = userStrategy.id,
+			assetFileName = "",
+			name = userStrategy.name,
+			buyInText = userStrategy.buyIn,
+			tableMinText = userStrategy.tableMinimum,
+			buyInMin = 0,
+			buyInMax = Int.MAX_VALUE,
+			tableMinMin = 0,
+			tableMinMax = Int.MAX_VALUE,
+			notes = userStrategy.notes,
+			credit = userStrategy.credit,
+			contentBlocks = contentBlocks
+		)
 	}
 
 	private fun renderStrategy(strategy: Strategy?) {

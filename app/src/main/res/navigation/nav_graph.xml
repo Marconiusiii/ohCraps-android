@@ -41,6 +41,11 @@
 		<argument
 			android:name="strategyId"
 			app:argType="string" />
+
+		<argument
+			android:name="userStrategyId"
+			app:argType="string"
+			android:defaultValue="" />
 	</fragment>
 
 </navigation>

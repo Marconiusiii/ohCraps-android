@@ -9,10 +9,13 @@ object UserStrategyStore {
 
 	private const val prefsName = "userStrategiesPrefs"
 	private const val strategiesKey = "userStrategiesJson"
+	private const val legacyStrategiesKey = "userStrategies"
 
 	fun load(context: Context): List<UserStrategy> {
 		val prefs = context.getSharedPreferences(prefsName, Context.MODE_PRIVATE)
-		val raw = prefs.getString(strategiesKey, null) ?: return emptyList()
+		val raw = prefs.getString(strategiesKey, null)
+			?: prefs.getString(legacyStrategiesKey, null)
+			?: return emptyList()
 		val jsonArray = runCatching { JSONArray(raw) }.getOrNull() ?: return emptyList()
 
 		val output = mutableListOf<UserStrategy>()
@@ -138,7 +141,7 @@ object UserStrategyStore {
 		context.getSharedPreferences(prefsName, Context.MODE_PRIVATE)
 			.edit()
 			.putString(strategiesKey, jsonArray.toString())
-			.apply()
+			.commit()
 	}
 
 	private fun strategyFromJson(jsonObject: JSONObject): UserStrategy? {
@@ -155,9 +158,15 @@ object UserStrategyStore {
 			steps = jsonObject.optString("steps"),
 			notes = jsonObject.optString("notes"),
 			credit = jsonObject.optString("credit"),
-			dateCreatedMillis = jsonObject.optLong("dateCreatedMillis", System.currentTimeMillis()),
+			dateCreatedMillis = when {
+				jsonObject.has("dateCreatedMillis") -> jsonObject.optLong("dateCreatedMillis", System.currentTimeMillis())
+				jsonObject.has("dateCreated") -> jsonObject.optLong("dateCreated", System.currentTimeMillis())
+				else -> System.currentTimeMillis()
+			},
 			dateLastEditedMillis = if (jsonObject.has("dateLastEditedMillis") && !jsonObject.isNull("dateLastEditedMillis")) {
 				jsonObject.optLong("dateLastEditedMillis")
+			} else if (jsonObject.has("dateLastEdited") && !jsonObject.isNull("dateLastEdited")) {
+				jsonObject.optLong("dateLastEdited")
 			} else {
 				null
 			},
