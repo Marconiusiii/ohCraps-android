@@ -48,6 +48,7 @@ class StrategiesFragment : Fragment(R.layout.fragment_strategies) {
 	private var selectedTableMinFilter: TableMinFilter? = null
 	private var selectedBuyInFilter: BuyInFilter? = null
 	private var searchAnnouncementJob: Job? = null
+	private var pendingFocusStrategyId: String? = null
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
@@ -170,7 +171,8 @@ class StrategiesFragment : Fragment(R.layout.fragment_strategies) {
 		findNavController().currentBackStackEntry?.savedStateHandle
 			?.getLiveData<String>(focusStrategyIdKey)
 			?.observe(viewLifecycleOwner) { strategyId ->
-				restoreFocusToStrategy(strategyId)
+				pendingFocusStrategyId = strategyId
+				tryRestorePendingFocus()
 				findNavController().currentBackStackEntry?.savedStateHandle?.remove<String>(focusStrategyIdKey)
 			}
 	}
@@ -192,6 +194,7 @@ class StrategiesFragment : Fragment(R.layout.fragment_strategies) {
 
 		val hasItems = sectionedItems.any { it is StrategyListItem.StrategyEntry }
 		emptyMessage.visibility = if (hasItems) View.GONE else View.VISIBLE
+		tryRestorePendingFocus()
 	}
 
 	private fun scheduleSearchAnnouncement() {
@@ -345,14 +348,46 @@ class StrategiesFragment : Fragment(R.layout.fragment_strategies) {
 		)
 	}
 
-	private fun restoreFocusToStrategy(strategyId: String) {
-		val position = strategyListAdapter.findPositionForStrategyId(strategyId) ?: return
+	private fun tryRestorePendingFocus() {
+		val strategyId = pendingFocusStrategyId ?: return
+		if (restoreFocusToStrategy(strategyId)) {
+			pendingFocusStrategyId = null
+		}
+	}
+
+	private fun restoreFocusToStrategy(strategyId: String): Boolean {
+		val position = strategyListAdapter.findPositionForStrategyId(strategyId) ?: return false
 		strategiesRecyclerView.scrollToPosition(position)
 		strategiesRecyclerView.post {
-			val viewHolder = strategiesRecyclerView.findViewHolderForAdapterPosition(position) ?: return@post
-			viewHolder.itemView.requestFocus()
-			viewHolder.itemView.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED)
+			focusStrategyRowAtPosition(position, retryCount = 0)
 		}
+		return true
+	}
+
+	private fun focusStrategyRowAtPosition(position: Int, retryCount: Int) {
+		val viewHolder = strategiesRecyclerView.findViewHolderForAdapterPosition(position)
+		if (viewHolder == null) {
+			if (retryCount < maxFocusRetries) {
+				strategiesRecyclerView.postDelayed(
+					{ focusStrategyRowAtPosition(position, retryCount + 1) },
+					focusRetryDelayMs
+				)
+			}
+			return
+		}
+
+		viewHolder.itemView.requestFocus()
+		viewHolder.itemView.performAccessibilityAction(
+			android.view.accessibility.AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS,
+			null
+		)
+		viewHolder.itemView.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED)
+		viewHolder.itemView.postDelayed({
+			viewHolder.itemView.performAccessibilityAction(
+				android.view.accessibility.AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS,
+				null
+			)
+		}, 160L)
 	}
 
 	override fun onDestroyView() {
@@ -365,5 +400,7 @@ class StrategiesFragment : Fragment(R.layout.fragment_strategies) {
 		const val focusStrategyIdKey = "focusStrategyId"
 		const val strategyAssetFileArg = "strategyAssetFileName"
 		const val strategyIdArg = "strategyId"
+		private const val maxFocusRetries = 4
+		private const val focusRetryDelayMs = 70L
 	}
 }
