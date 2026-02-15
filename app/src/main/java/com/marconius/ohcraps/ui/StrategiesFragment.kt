@@ -6,6 +6,7 @@ import android.view.accessibility.AccessibilityEvent
 import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.core.os.bundleOf
+import androidx.core.view.ViewCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -24,6 +25,8 @@ import com.marconius.ohcraps.strategies.StrategyRepository
 import com.marconius.ohcraps.strategies.TableMinFilter
 import java.util.Locale
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -33,6 +36,7 @@ class StrategiesFragment : Fragment(R.layout.fragment_strategies) {
 	private lateinit var tableFilterButton: MaterialButton
 	private lateinit var buyInFilterButton: MaterialButton
 	private lateinit var emptyMessage: TextView
+	private lateinit var searchAnnouncementView: TextView
 	private lateinit var strategiesRecyclerView: RecyclerView
 
 	private val strategyListAdapter = StrategyListAdapter { clickedStrategy ->
@@ -43,6 +47,7 @@ class StrategiesFragment : Fragment(R.layout.fragment_strategies) {
 	private var currentSearchText: String = ""
 	private var selectedTableMinFilter: TableMinFilter? = null
 	private var selectedBuyInFilter: BuyInFilter? = null
+	private var searchAnnouncementJob: Job? = null
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
@@ -59,6 +64,7 @@ class StrategiesFragment : Fragment(R.layout.fragment_strategies) {
 		tableFilterButton = rootView.findViewById(R.id.tableFilterButton)
 		buyInFilterButton = rootView.findViewById(R.id.buyInFilterButton)
 		emptyMessage = rootView.findViewById(R.id.emptyMessage)
+		searchAnnouncementView = rootView.findViewById(R.id.searchAnnouncementView)
 		strategiesRecyclerView = rootView.findViewById(R.id.strategiesRecyclerView)
 	}
 
@@ -71,6 +77,7 @@ class StrategiesFragment : Fragment(R.layout.fragment_strategies) {
 		searchInput.doAfterTextChanged { input ->
 			currentSearchText = input?.toString().orEmpty()
 			renderFilteredStrategies()
+			scheduleSearchAnnouncement()
 		}
 	}
 
@@ -81,6 +88,24 @@ class StrategiesFragment : Fragment(R.layout.fragment_strategies) {
 
 		buyInFilterButton.setOnClickListener {
 			showBuyInFilterMenu()
+		}
+
+		ViewCompat.replaceAccessibilityAction(
+			tableFilterButton,
+			androidx.core.view.accessibility.AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_CLICK,
+			getString(R.string.filter_action_short)
+		) { _, _ ->
+			showTableMinFilterMenu()
+			true
+		}
+
+		ViewCompat.replaceAccessibilityAction(
+			buyInFilterButton,
+			androidx.core.view.accessibility.AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_CLICK,
+			getString(R.string.filter_action_short)
+		) { _, _ ->
+			showBuyInFilterMenu()
+			true
 		}
 
 		refreshFilterButtonLabels()
@@ -167,6 +192,28 @@ class StrategiesFragment : Fragment(R.layout.fragment_strategies) {
 
 		val hasItems = sectionedItems.any { it is StrategyListItem.StrategyEntry }
 		emptyMessage.visibility = if (hasItems) View.GONE else View.VISIBLE
+	}
+
+	private fun scheduleSearchAnnouncement() {
+		searchAnnouncementJob?.cancel()
+		searchAnnouncementJob = viewLifecycleOwner.lifecycleScope.launch {
+			delay(1000)
+			announceSearchResultCount()
+		}
+	}
+
+	private fun announceSearchResultCount() {
+		if (currentSearchText.trim().isEmpty()) {
+			return
+		}
+
+		val strategyCount = applyFilters(allStrategies).size
+		val announcementText = if (strategyCount == 1) {
+			getString(R.string.search_result_single)
+		} else {
+			getString(R.string.search_result_plural, strategyCount)
+		}
+		searchAnnouncementView.text = announcementText
 	}
 
 	private fun applyFilters(strategies: List<Strategy>): List<Strategy> {
@@ -306,6 +353,12 @@ class StrategiesFragment : Fragment(R.layout.fragment_strategies) {
 			viewHolder.itemView.requestFocus()
 			viewHolder.itemView.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED)
 		}
+	}
+
+	override fun onDestroyView() {
+		searchAnnouncementJob?.cancel()
+		searchAnnouncementJob = null
+		super.onDestroyView()
 	}
 
 	companion object {

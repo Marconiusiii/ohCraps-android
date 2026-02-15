@@ -12,13 +12,15 @@
 
 	<string name="search_hint">Search strategies</string>
 	<string name="search_accessibility_label">Search strategies</string>
+	<string name="search_clear_button">Clear search</string>
+	<string name="search_result_single">Showing 1 strategy</string>
+	<string name="search_result_plural">Showing %1$d strategies</string>
 	<string name="filter_any">Any</string>
 	<string name="filter_table_default">Table Minimum: Any</string>
 	<string name="filter_buy_in_default">Buy-in: Any</string>
 	<string name="filter_table_label">Table Minimum: %1$s</string>
 	<string name="filter_buy_in_label">Buy-in: %1$s</string>
-	<string name="filter_table_accessibility">Choose table minimum filter</string>
-	<string name="filter_buy_in_accessibility">Choose buy-in filter</string>
+	<string name="filter_action_short">filter</string>
 	<string name="no_strategies_found">No strategies match your current filters.</string>
 
 	<string name="back_button">Back</string>

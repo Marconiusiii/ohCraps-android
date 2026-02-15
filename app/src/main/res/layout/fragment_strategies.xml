@@ -25,6 +25,8 @@
 		app:boxBackgroundMode="filled"
 		app:boxBackgroundColor="@color/surface_light"
 		app:hintTextColor="@color/text_secondary"
+		app:endIconMode="clear_text"
+		app:endIconContentDescription="@string/search_clear_button"
 		android:layout_marginBottom="@dimen/controlSpacing">
 
 		<com.google.android.material.textfield.TextInputEditText
@@ -52,8 +54,7 @@
 			android:layout_height="wrap_content"
 			android:layout_weight="1"
 			android:text="@string/filter_table_default"
-			android:layout_marginEnd="@dimen/controlSpacing"
-			android:contentDescription="@string/filter_table_accessibility" />
+			android:layout_marginEnd="@dimen/controlSpacing" />
 
 		<com.google.android.material.button.MaterialButton
 			android:id="@+id/buyInFilterButton"
@@ -61,8 +62,7 @@
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
 			android:layout_weight="1"
-			android:text="@string/filter_buy_in_default"
-			android:contentDescription="@string/filter_buy_in_accessibility" />
+			android:text="@string/filter_buy_in_default" />
 	</LinearLayout>
 
 	<TextView
@@ -73,6 +73,15 @@
 		android:textAppearance="@style/TextAppearance.OhCraps.Body"
 		android:visibility="gone"
 		android:layout_marginBottom="@dimen/controlSpacing" />
+
+	<TextView
+		android:id="@+id/searchAnnouncementView"
+		android:layout_width="1dp"
+		android:layout_height="1dp"
+		android:alpha="0"
+		android:accessibilityLiveRegion="polite"
+		android:importantForAccessibility="yes"
+		android:textColor="@android:color/transparent" />
 
 	<androidx.recyclerview.widget.RecyclerView
 		android:id="@+id/strategiesRecyclerView"
