@@ -10,5 +10,6 @@ data class UserStrategy(
 	val credit: String,
 	val dateCreatedMillis: Long,
 	val dateLastEditedMillis: Long?,
-	val isSubmitted: Boolean
+	val isSubmitted: Boolean,
+	val submissionCount: Int
 )

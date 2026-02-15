@@ -1,9 +1,11 @@
 package com.marconius.ohcraps.ui
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.View
 import android.view.accessibility.AccessibilityEvent
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.AccessibilityDelegateCompat
 import androidx.core.os.bundleOf
@@ -17,12 +19,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import com.marconius.ohcraps.MainActivity
 import com.marconius.ohcraps.R
 
 class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 
 	private lateinit var createModeButton: MaterialButton
 	private lateinit var myStrategiesModeButton: MaterialButton
+	private lateinit var screenTitle: TextView
+	private lateinit var modeButtonsRow: View
 
 	private lateinit var createFormContainer: View
 	private lateinit var myStrategiesContainer: View
@@ -48,8 +53,21 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 
 	private var userStrategies: List<UserStrategy> = emptyList()
 	private var editingStrategyId: String? = null
+	private var editingStrategyName: String = ""
 	private var editingOriginStrategyId: String? = null
+	private var editingReturnTarget: EditReturnTarget = EditReturnTarget.List
 	private var currentMode: Mode = Mode.Create
+	private var pendingSubmitStrategyId: String? = null
+
+	private val emailLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+		val strategyId = pendingSubmitStrategyId ?: return@registerForActivityResult
+		if (result.resultCode != Activity.RESULT_CANCELED) {
+			userStrategies = UserStrategyStore.markSubmitted(requireContext(), userStrategies, strategyId)
+			renderUserStrategies()
+		}
+		restoreFocusToUserStrategy(strategyId)
+		pendingSubmitStrategyId = null
+	}
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
@@ -59,9 +77,11 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 		setupFormButtons()
 		setupMyStrategiesList()
 		observeFocusRestoreRequests()
+		observeDetailActionRequests()
 		installFieldAccessibilityDelegates()
 		loadUserStrategies()
 		renderCreateMode()
+		applyEditingModeChrome(editingStrategyId != null)
 	}
 
 	override fun onResume() {
@@ -70,9 +90,17 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 		if (currentMode == Mode.MyStrategies) {
 			renderMyStrategiesMode()
 		}
+		applyEditingModeChrome(editingStrategyId != null)
+	}
+
+	override fun onDestroyView() {
+		(activity as? MainActivity)?.setBottomNavForcedHidden(false)
+		super.onDestroyView()
 	}
 
 	private fun bindViews(rootView: View) {
+		screenTitle = rootView.findViewById(R.id.screenTitle)
+		modeButtonsRow = rootView.findViewById(R.id.modeButtonsRow)
 		createModeButton = rootView.findViewById(R.id.createModeButton)
 		myStrategiesModeButton = rootView.findViewById(R.id.myStrategiesModeButton)
 
@@ -109,6 +137,10 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 	private fun setupFormFieldListeners() {
 		nameInput.doAfterTextChanged {
 			nameInputLayout.error = null
+			if (editingStrategyId != null) {
+				editingStrategyName = it?.toString()?.trim().orEmpty()
+				updateScreenTitle()
+			}
 		}
 		buyInInput.doAfterTextChanged {
 			buyInInputLayout.error = null
@@ -203,6 +235,18 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 			},
 			onLongPressed = { anchor, strategy ->
 				showActionsDialog(anchor, strategy)
+			},
+			onEdit = { strategy ->
+				beginEditingStrategy(strategy, EditReturnTarget.List)
+			},
+			onDuplicate = { strategy ->
+				duplicateStrategy(strategy)
+			},
+			onSubmit = { strategy ->
+				submitStrategy(strategy)
+			},
+			onDelete = { strategy ->
+				confirmDeleteStrategy(strategy)
 			}
 		)
 		myStrategiesRecyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -271,6 +315,7 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 		createFormContainer.visibility = View.VISIBLE
 		myStrategiesContainer.visibility = View.GONE
 		updateActionButtonLabels()
+		updateScreenTitle()
 		updateModeButtonState()
 	}
 
@@ -279,6 +324,7 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 		createFormContainer.visibility = View.GONE
 		myStrategiesContainer.visibility = View.VISIBLE
 		renderUserStrategies()
+		updateScreenTitle()
 		updateModeButtonState()
 	}
 
@@ -365,6 +411,7 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 		}
 
 		val strategyId = editingStrategyId ?: return
+		val returnTarget = editingReturnTarget
 		userStrategies = UserStrategyStore.update(
 			context = requireContext(),
 			existing = userStrategies,
@@ -378,8 +425,16 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 		)
 
 		exitEditingMode()
-		renderUserStrategies()
-		renderMyStrategiesMode()
+		if (returnTarget == EditReturnTarget.Detail) {
+			openUserStrategyDetail(
+				strategyId = strategyId,
+				focusTarget = StrategyDetailFragment.focusTargetTitle
+			)
+		} else {
+			renderUserStrategies()
+			renderMyStrategiesMode()
+			restoreFocusToUserStrategy(strategyId)
+		}
 	}
 
 	private fun resetForm() {
@@ -397,14 +452,20 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 
 	private fun exitEditingMode() {
 		editingStrategyId = null
+		editingStrategyName = ""
 		editingOriginStrategyId = null
+		editingReturnTarget = EditReturnTarget.List
 		updateActionButtonLabels()
 		resetForm()
+		applyEditingModeChrome(false)
+		updateScreenTitle()
 	}
 
-	private fun beginEditingStrategy(strategy: UserStrategy) {
+	private fun beginEditingStrategy(strategy: UserStrategy, returnTarget: EditReturnTarget) {
 		editingStrategyId = strategy.id
+		editingStrategyName = strategy.name
 		editingOriginStrategyId = strategy.id
+		editingReturnTarget = returnTarget
 		nameInput.setText(strategy.name)
 		buyInInput.setText(strategy.buyIn)
 		tableMinimumInput.setText(strategy.tableMinimum)
@@ -413,6 +474,8 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 		creditInput.setText(strategy.credit)
 		updateActionButtonLabels()
 		renderCreateMode()
+		applyEditingModeChrome(true)
+		updateScreenTitle()
 	}
 
 	private fun renderUserStrategies() {
@@ -427,12 +490,20 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 	}
 
 	private fun openStrategyDetail(strategy: UserStrategy) {
+		openUserStrategyDetail(
+			strategyId = strategy.id,
+			focusTarget = StrategyDetailFragment.focusTargetTitle
+		)
+	}
+
+	private fun openUserStrategyDetail(strategyId: String, focusTarget: String) {
 		findNavController().navigate(
 			R.id.strategyDetailFragment,
 			bundleOf(
 				StrategiesFragment.strategyAssetFileArg to "",
-				StrategiesFragment.strategyIdArg to strategy.id,
-				userStrategyIdArg to strategy.id
+				StrategiesFragment.strategyIdArg to strategyId,
+				userStrategyIdArg to strategyId,
+				StrategyDetailFragment.focusTargetArg to focusTarget
 			)
 		)
 	}
@@ -449,7 +520,7 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 			.setTitle(getString(R.string.user_strategy_actions_for, strategy.name))
 			.setItems(options) { _, which ->
 				when (which) {
-					0 -> beginEditingStrategy(strategy)
+					0 -> beginEditingStrategy(strategy, EditReturnTarget.List)
 					1 -> duplicateStrategy(strategy)
 					2 -> submitStrategy(strategy)
 					3 -> confirmDeleteStrategy(strategy)
@@ -462,8 +533,13 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 	}
 
 	private fun duplicateStrategy(strategy: UserStrategy) {
+		val previousStrategies = userStrategies
 		userStrategies = UserStrategyStore.duplicate(requireContext(), userStrategies, strategy)
 		renderUserStrategies()
+		val duplicatedId = findNewStrategyId(previousStrategies, userStrategies)
+		if (!duplicatedId.isNullOrBlank()) {
+			restoreFocusToUserStrategy(duplicatedId)
+		}
 	}
 
 	private fun confirmDeleteStrategy(strategy: UserStrategy) {
@@ -472,33 +548,55 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 			.setMessage(R.string.user_strategy_delete_message)
 			.setNegativeButton(android.R.string.cancel, null)
 			.setPositiveButton(R.string.user_strategy_action_delete) { _, _ ->
+				val sortedBeforeDelete = userStrategies.sortedByDescending { it.dateCreatedMillis }
+				val deletedIndex = sortedBeforeDelete.indexOfFirst { it.id == strategy.id }
 				userStrategies = UserStrategyStore.delete(requireContext(), userStrategies, strategy.id)
 				renderUserStrategies()
+				restoreFocusAfterDelete(deletedIndex)
 			}
 			.show()
 	}
 
 	private fun submitStrategy(strategy: UserStrategy) {
-		val subject = getString(R.string.user_strategy_submission_subject, strategy.name)
-		val body = buildSubmissionBody(strategy)
-		val didOpenComposer = openEmailComposer(
-			subject = subject,
-			body = body,
+		AlertDialog.Builder(requireContext())
+			.setTitle(
+				if (strategy.submissionCount > 0) {
+					R.string.user_strategy_resubmit_confirm_title
+				} else {
+					R.string.user_strategy_submit_confirm_title
+				}
+			)
+			.setMessage(R.string.user_strategy_submit_confirm_message)
+			.setPositiveButton(R.string.user_strategy_submit_confirm_action) { _, _ ->
+				startSubmissionFlow(strategy)
+			}
+			.setNegativeButton(android.R.string.cancel) { _, _ ->
+				restoreFocusToUserStrategy(strategy.id)
+			}
+			.show()
+	}
+
+	private fun startSubmissionFlow(strategy: UserStrategy) {
+		val intent = buildEmailComposerIntent(
+			subject = getString(R.string.user_strategy_submission_subject, strategy.name),
+			body = buildSubmissionBody(strategy),
 			recipient = submissionRecipient
 		)
-		if (!didOpenComposer) {
+		if (intent == null) {
 			AlertDialog.Builder(requireContext())
 				.setMessage(R.string.user_strategy_no_email_app)
-				.setPositiveButton(android.R.string.ok, null)
+				.setPositiveButton(android.R.string.ok) { _, _ ->
+					restoreFocusToUserStrategy(strategy.id)
+				}
 				.show()
 			return
 		}
 
-		userStrategies = UserStrategyStore.markSubmitted(requireContext(), userStrategies, strategy.id)
-		renderUserStrategies()
+		pendingSubmitStrategyId = strategy.id
+		emailLauncher.launch(intent)
 	}
 
-	private fun openEmailComposer(subject: String, body: String, recipient: String): Boolean {
+	private fun buildEmailComposerIntent(subject: String, body: String, recipient: String): android.content.Intent? {
 		val encodedSubject = android.net.Uri.encode(subject)
 		val encodedBody = android.net.Uri.encode(body)
 		val emailUri = android.net.Uri.parse("mailto:$recipient?subject=$encodedSubject&body=$encodedBody")
@@ -507,8 +605,7 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 			data = emailUri
 		}
 		if (sendToIntent.resolveActivity(requireContext().packageManager) != null) {
-			startActivity(sendToIntent)
-			return true
+			return sendToIntent
 		}
 
 		val sendIntent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
@@ -518,27 +615,32 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 			putExtra(android.content.Intent.EXTRA_TEXT, body)
 		}
 		if (sendIntent.resolveActivity(requireContext().packageManager) != null) {
-			startActivity(
-				android.content.Intent.createChooser(
-					sendIntent,
-					getString(R.string.user_strategy_email_chooser_title)
-				)
+			return android.content.Intent.createChooser(
+				sendIntent,
+				getString(R.string.user_strategy_email_chooser_title)
 			)
-			return true
 		}
 
-		return false
+		return null
 	}
 
 	private fun showCancelEditingDialog() {
 		val strategyIdToRestore = editingOriginStrategyId
+		val returnTarget = editingReturnTarget
 		AlertDialog.Builder(requireContext())
 			.setTitle(R.string.create_cancel_changes_title)
 			.setPositiveButton(R.string.create_cancel_changes_confirm) { _, _ ->
 				exitEditingMode()
-				renderMyStrategiesMode()
-				if (!strategyIdToRestore.isNullOrBlank()) {
-					restoreFocusToUserStrategy(strategyIdToRestore)
+				if (returnTarget == EditReturnTarget.Detail && !strategyIdToRestore.isNullOrBlank()) {
+					openUserStrategyDetail(
+						strategyId = strategyIdToRestore,
+						focusTarget = StrategyDetailFragment.focusTargetTitle
+					)
+				} else {
+					renderMyStrategiesMode()
+					if (!strategyIdToRestore.isNullOrBlank()) {
+						restoreFocusToUserStrategy(strategyIdToRestore)
+					}
 				}
 			}
 			.setNegativeButton(R.string.create_cancel_changes_keep_editing, null)
@@ -576,6 +678,29 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 			}
 	}
 
+	private fun observeDetailActionRequests() {
+		findNavController().currentBackStackEntry?.savedStateHandle
+			?.getLiveData<String>(detailActionTypeKey)
+			?.observe(viewLifecycleOwner) { actionType ->
+				val savedStateHandle = findNavController().currentBackStackEntry?.savedStateHandle ?: return@observe
+				val strategyId = savedStateHandle.get<String>(detailActionStrategyIdKey).orEmpty()
+
+				if (actionType == detailActionEdit && strategyId.isNotBlank()) {
+					loadUserStrategies()
+					val strategy = userStrategies.firstOrNull { it.id == strategyId }
+					if (strategy != null) {
+						beginEditingStrategy(strategy, EditReturnTarget.Detail)
+					}
+				} else if (actionType == detailActionFocusListTitle) {
+					renderMyStrategiesMode()
+					focusCreateScreenTitle()
+				}
+
+				savedStateHandle.remove<String>(detailActionTypeKey)
+				savedStateHandle.remove<String>(detailActionStrategyIdKey)
+			}
+	}
+
 	private fun restoreFocusToUserStrategy(strategyId: String) {
 		if (currentMode != Mode.MyStrategies) {
 			renderMyStrategiesMode()
@@ -599,9 +724,57 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 		}
 	}
 
+	private fun restoreFocusAfterDelete(deletedIndex: Int) {
+		val sorted = userStrategies.sortedByDescending { it.dateCreatedMillis }
+		if (sorted.isEmpty()) {
+			emptyMyStrategiesText.requestFocus()
+			emptyMyStrategiesText.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED)
+			return
+		}
+
+		val targetIndex = when {
+			deletedIndex < 0 -> 0
+			deletedIndex < sorted.size -> deletedIndex
+			else -> sorted.size - 1
+		}
+		restoreFocusToUserStrategy(sorted[targetIndex].id)
+	}
+
+	private fun findNewStrategyId(previous: List<UserStrategy>, current: List<UserStrategy>): String? {
+		val previousIds = previous.map { it.id }.toSet()
+		return current.firstOrNull { !previousIds.contains(it.id) }?.id
+	}
+
+	private fun focusCreateScreenTitle() {
+		screenTitle.requestFocus()
+		screenTitle.performAccessibilityAction(
+			android.view.accessibility.AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS,
+			null
+		)
+		screenTitle.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED)
+	}
+
+	private fun updateScreenTitle() {
+		screenTitle.text = if (editingStrategyId != null) {
+			getString(R.string.create_editing_title, editingStrategyName.ifBlank { getString(R.string.create_name_label) })
+		} else {
+			getString(R.string.title_create_strategy)
+		}
+	}
+
+	private fun applyEditingModeChrome(isEditing: Boolean) {
+		modeButtonsRow.visibility = if (isEditing) View.GONE else View.VISIBLE
+		(activity as? MainActivity)?.setBottomNavForcedHidden(isEditing)
+	}
+
 	private enum class Mode {
 		Create,
 		MyStrategies
+	}
+
+	private enum class EditReturnTarget {
+		List,
+		Detail
 	}
 
 	private enum class Field {
@@ -619,6 +792,10 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 	companion object {
 		const val userStrategyIdArg = "userStrategyId"
 		const val focusUserStrategyIdKey = "focusUserStrategyId"
+		const val detailActionTypeKey = "detailActionType"
+		const val detailActionStrategyIdKey = "detailActionStrategyId"
+		const val detailActionEdit = "edit"
+		const val detailActionFocusListTitle = "focusListTitle"
 		private const val submissionRecipient = "marco@marconius.com"
 	}
 }

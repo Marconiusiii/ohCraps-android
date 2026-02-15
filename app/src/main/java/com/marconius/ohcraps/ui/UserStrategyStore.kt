@@ -49,7 +49,8 @@ object UserStrategyStore {
 			credit = credit,
 			dateCreatedMillis = now,
 			dateLastEditedMillis = null,
-			isSubmitted = false
+			isSubmitted = false,
+			submissionCount = 0
 		)
 
 		val updated = existing + newStrategy
@@ -80,7 +81,9 @@ object UserStrategyStore {
 					steps = steps,
 					notes = notes,
 					credit = credit,
-					dateLastEditedMillis = now
+					dateLastEditedMillis = now,
+					isSubmitted = false,
+					submissionCount = 0
 				)
 			}
 		}
@@ -109,7 +112,8 @@ object UserStrategyStore {
 			name = strategy.name + " (Copy)",
 			dateCreatedMillis = now,
 			dateLastEditedMillis = null,
-			isSubmitted = false
+			isSubmitted = false,
+			submissionCount = 0
 		)
 		val updated = existing + copy
 		save(context, updated)
@@ -123,7 +127,10 @@ object UserStrategyStore {
 	): List<UserStrategy> {
 		val updated = existing.map { strategy ->
 			if (strategy.id == strategyId) {
-				strategy.copy(isSubmitted = true)
+				strategy.copy(
+					isSubmitted = true,
+					submissionCount = strategy.submissionCount + 1
+				)
 			} else {
 				strategy
 			}
@@ -170,7 +177,12 @@ object UserStrategyStore {
 			} else {
 				null
 			},
-			isSubmitted = jsonObject.optBoolean("isSubmitted", false)
+			isSubmitted = jsonObject.optBoolean("isSubmitted", false),
+			submissionCount = when {
+				jsonObject.has("submissionCount") -> jsonObject.optInt("submissionCount", 0)
+				jsonObject.optBoolean("isSubmitted", false) -> 1
+				else -> 0
+			}
 		)
 	}
 
@@ -186,5 +198,6 @@ object UserStrategyStore {
 			.put("dateCreatedMillis", strategy.dateCreatedMillis)
 			.put("dateLastEditedMillis", strategy.dateLastEditedMillis)
 			.put("isSubmitted", strategy.isSubmitted)
+			.put("submissionCount", strategy.submissionCount)
 	}
 }

@@ -10,6 +10,7 @@
 
 	<string name="title_rules">Rules</string>
 	<string name="title_create_strategy">Create Strategy</string>
+	<string name="create_editing_title">Editing %1$s</string>
 	<string name="title_about">About</string>
 
 	<string name="create_mode_label">Create Strategy</string>
@@ -47,6 +48,7 @@
 	<string name="my_strategies_empty">No saved strategies yet. Use the Create Strategy mode to add one.</string>
 	<string name="my_strategies_count">Saved strategies: %1$d</string>
 	<string name="user_strategy_actions">Actions</string>
+	<string name="user_strategy_actions_button">Strategy Actions</string>
 	<string name="user_strategy_action_edit">Edit</string>
 	<string name="user_strategy_action_duplicate">Duplicate</string>
 	<string name="user_strategy_action_submit">Submit</string>
@@ -63,6 +65,13 @@
 	<string name="user_strategy_meta_template">Created %1$s, %2$s</string>
 	<string name="user_strategy_accessibility_summary">%1$s. Created %2$s. %3$s.</string>
 	<string name="user_strategy_actions_for">Actions for %1$s</string>
+	<string name="user_strategy_submit_ready">Ready to Submit.</string>
+	<string name="user_strategy_submit_done">Submitted to Oh Craps!</string>
+	<string name="user_strategy_resubmit_done">Resubmitted to Oh Craps!</string>
+	<string name="user_strategy_submit_confirm_title">Submit Strategy?</string>
+	<string name="user_strategy_resubmit_confirm_title">Resubmit Strategy?</string>
+	<string name="user_strategy_submit_confirm_message">This will open your email app.</string>
+	<string name="user_strategy_submit_confirm_action">Continue</string>
 
 	<string name="search_hint">Search strategies</string>
 	<string name="search_accessibility_label">Search strategies</string>

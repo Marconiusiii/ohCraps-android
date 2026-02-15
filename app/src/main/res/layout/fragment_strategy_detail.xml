@@ -7,13 +7,20 @@
 	android:background="@drawable/bg_felt"
 	android:padding="@dimen/screenPadding">
 
-	<com.google.android.material.button.MaterialButton
-		android:id="@+id/backButton"
-		style="@style/Widget.Material3.Button.TextButton"
-		android:layout_width="wrap_content"
+	<LinearLayout
+		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:text="@string/back_button"
-		android:contentDescription="@string/back_button" />
+		android:orientation="horizontal"
+		android:layout_marginBottom="@dimen/controlSpacing">
+
+		<com.google.android.material.button.MaterialButton
+			android:id="@+id/backButton"
+			style="@style/Widget.Material3.Button.TextButton"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/back_button"
+			android:contentDescription="@string/back_button" />
+	</LinearLayout>
 
 	<TextView
 		android:id="@+id/screenTitle"
@@ -21,7 +28,25 @@
 		android:layout_height="wrap_content"
 		android:textAppearance="@style/TextAppearance.OhCraps.ScreenTitle"
 		android:accessibilityHeading="true"
-		android:layout_marginBottom="@dimen/sectionSpacing" />
+		android:layout_marginBottom="@dimen/controlSpacing" />
+
+	<com.google.android.material.button.MaterialButton
+		android:id="@+id/actionsButton"
+		style="@style/Widget.Material3.Button.OutlinedButton"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/user_strategy_actions_button"
+		android:contentDescription="@string/user_strategy_actions_button"
+		android:visibility="gone"
+		android:layout_marginBottom="@dimen/controlSpacing" />
+
+	<TextView
+		android:id="@+id/submissionStatusText"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:textAppearance="@style/TextAppearance.OhCraps.Body"
+		android:layout_marginBottom="@dimen/sectionSpacing"
+		android:visibility="gone" />
 
 	<ScrollView
 		android:layout_width="match_parent"
