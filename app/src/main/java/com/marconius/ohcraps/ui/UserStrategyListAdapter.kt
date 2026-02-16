@@ -18,6 +18,7 @@ class UserStrategyListAdapter(
 	private val onEdit: (strategy: UserStrategy) -> Unit,
 	private val onDuplicate: (strategy: UserStrategy) -> Unit,
 	private val onSubmit: (strategy: UserStrategy) -> Unit,
+	private val onShare: (strategy: UserStrategy) -> Unit,
 	private val onDelete: (strategy: UserStrategy) -> Unit
 ) : RecyclerView.Adapter<UserStrategyListAdapter.UserStrategyViewHolder>() {
 
@@ -45,6 +46,7 @@ class UserStrategyListAdapter(
 			onEdit = onEdit,
 			onDuplicate = onDuplicate,
 			onSubmit = onSubmit,
+			onShare = onShare,
 			onDelete = onDelete,
 			dateFormat = dateFormat
 		)
@@ -70,6 +72,7 @@ class UserStrategyListAdapter(
 		private val onEdit: (strategy: UserStrategy) -> Unit,
 		private val onDuplicate: (strategy: UserStrategy) -> Unit,
 		private val onSubmit: (strategy: UserStrategy) -> Unit,
+		private val onShare: (strategy: UserStrategy) -> Unit,
 		private val onDelete: (strategy: UserStrategy) -> Unit,
 		private val dateFormat: DateFormat
 	) : RecyclerView.ViewHolder(itemView) {
@@ -80,6 +83,7 @@ class UserStrategyListAdapter(
 		private var actionEditId: Int = noActionId
 		private var actionDuplicateId: Int = noActionId
 		private var actionSubmitId: Int = noActionId
+		private var actionShareId: Int = noActionId
 		private var actionDeleteId: Int = noActionId
 
 		init {
@@ -144,6 +148,14 @@ class UserStrategyListAdapter(
 					true
 				}
 			)
+			actionShareId = ViewCompat.addAccessibilityAction(
+				itemView,
+				itemView.context.getString(R.string.user_strategy_action_share),
+				AccessibilityViewCommand { _, _ ->
+					boundStrategy?.let(onShare)
+					true
+				}
+			)
 			actionDeleteId = ViewCompat.addAccessibilityAction(
 				itemView,
 				itemView.context.getString(R.string.user_strategy_action_delete),
@@ -164,12 +176,16 @@ class UserStrategyListAdapter(
 			if (actionSubmitId != noActionId) {
 				ViewCompat.removeAccessibilityAction(itemView, actionSubmitId)
 			}
+			if (actionShareId != noActionId) {
+				ViewCompat.removeAccessibilityAction(itemView, actionShareId)
+			}
 			if (actionDeleteId != noActionId) {
 				ViewCompat.removeAccessibilityAction(itemView, actionDeleteId)
 			}
 			actionEditId = noActionId
 			actionDuplicateId = noActionId
 			actionSubmitId = noActionId
+			actionShareId = noActionId
 			actionDeleteId = noActionId
 		}
 	}

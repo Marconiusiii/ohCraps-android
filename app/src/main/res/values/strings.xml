@@ -60,6 +60,7 @@
 	<string name="user_strategy_action_duplicate">Duplicate</string>
 	<string name="user_strategy_action_submit">Submit</string>
 	<string name="user_strategy_action_resubmit">Resubmit</string>
+	<string name="user_strategy_action_share">Share Strategy</string>
 	<string name="user_strategy_action_delete">Delete</string>
 	<string name="close_button">Close</string>
 	<string name="user_strategy_delete_title">Delete %1$s?</string>
@@ -79,6 +80,11 @@
 	<string name="user_strategy_resubmit_confirm_title">Resubmit Strategy?</string>
 	<string name="user_strategy_submit_confirm_message">This will open your email app.</string>
 	<string name="user_strategy_submit_confirm_action">Continue</string>
+	<string name="share_strategy_button">Share Strategy</string>
+	<string name="share_strategy_chooser_title">Share strategy with</string>
+	<string name="share_strategy_subject">Oh Craps! Strategy - %1$s</string>
+	<string name="share_strategy_file_label">Strategy text file</string>
+	<string name="share_strategy_no_app">No app is available to share this strategy.</string>
 
 	<string name="search_hint">Search strategies</string>
 	<string name="search_accessibility_label">Search strategies</string>

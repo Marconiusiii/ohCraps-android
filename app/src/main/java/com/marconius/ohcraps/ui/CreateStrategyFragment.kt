@@ -245,6 +245,9 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 			onSubmit = { strategy ->
 				submitStrategy(strategy)
 			},
+			onShare = { strategy ->
+				shareStrategy(strategy)
+			},
 			onDelete = { strategy ->
 				confirmDeleteStrategy(strategy)
 			}
@@ -513,6 +516,7 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 			getString(R.string.user_strategy_action_edit),
 			getString(R.string.user_strategy_action_duplicate),
 			if (strategy.isSubmitted) getString(R.string.user_strategy_action_resubmit) else getString(R.string.user_strategy_action_submit),
+			getString(R.string.user_strategy_action_share),
 			getString(R.string.user_strategy_action_delete)
 		)
 
@@ -523,13 +527,33 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 					0 -> beginEditingStrategy(strategy, EditReturnTarget.List)
 					1 -> duplicateStrategy(strategy)
 					2 -> submitStrategy(strategy)
-					3 -> confirmDeleteStrategy(strategy)
+					3 -> shareStrategy(strategy)
+					4 -> confirmDeleteStrategy(strategy)
 				}
 			}
 			.setNegativeButton(R.string.close_button, null)
 			.show()
 
 		anchor.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED)
+	}
+
+	private fun shareStrategy(strategy: UserStrategy) {
+		val shareBody = StrategyShareFormatter.formatUserStrategy(strategy)
+		val shareIntent = StrategyShareService.createShareIntent(
+			context = requireContext(),
+			strategyName = strategy.name,
+			shareBody = shareBody
+		)
+		if (shareIntent == null) {
+			AlertDialog.Builder(requireContext())
+				.setMessage(R.string.share_strategy_no_app)
+				.setPositiveButton(android.R.string.ok) { _, _ ->
+					restoreFocusToUserStrategy(strategy.id)
+				}
+				.show()
+			return
+		}
+		startActivity(shareIntent)
 	}
 
 	private fun duplicateStrategy(strategy: UserStrategy) {

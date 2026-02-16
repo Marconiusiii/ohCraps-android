@@ -26,6 +26,7 @@ import kotlinx.coroutines.withContext
 class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 
 	private lateinit var backButton: MaterialButton
+	private lateinit var shareButton: MaterialButton
 	private lateinit var actionsButton: MaterialButton
 	private lateinit var screenTitle: TextView
 	private lateinit var submissionStatusText: TextView
@@ -42,6 +43,7 @@ class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 	private var userStrategyId: String = ""
 	private var initialFocusTarget: String = focusTargetNone
 	private var userStrategyForActions: UserStrategy? = null
+	private var displayedStrategy: Strategy? = null
 	private var pendingDetailSubmitStrategyId: String? = null
 
 	private val emailLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -68,6 +70,7 @@ class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 
 	private fun bindViews(rootView: View) {
 		backButton = rootView.findViewById(R.id.backButton)
+		shareButton = rootView.findViewById(R.id.shareButton)
 		actionsButton = rootView.findViewById(R.id.actionsButton)
 		screenTitle = rootView.findViewById(R.id.screenTitle)
 		submissionStatusText = rootView.findViewById(R.id.submissionStatusText)
@@ -93,6 +96,9 @@ class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 	private fun bindActionsMenu() {
 		actionsButton.setOnClickListener {
 			showUserStrategyActionsDialog()
+		}
+		shareButton.setOnClickListener {
+			shareCurrentStrategy()
 		}
 	}
 
@@ -144,6 +150,7 @@ class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 	}
 
 	private fun renderStrategy(strategy: Strategy?) {
+		displayedStrategy = strategy
 		if (strategy == null) {
 			screenTitle.text = getString(R.string.strategy_not_found)
 			buyInValue.text = getString(R.string.unknown_value)
@@ -151,6 +158,7 @@ class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 			notesSection.visibility = View.GONE
 			creditSection.visibility = View.GONE
 			stepsContainer.removeAllViews()
+			shareButton.visibility = View.GONE
 			actionsButton.visibility = View.GONE
 			submissionStatusText.visibility = View.GONE
 			return
@@ -162,6 +170,7 @@ class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 
 		buyInValue.contentDescription = getString(R.string.kv_buy_in, strategy.buyInText)
 		tableMinValue.contentDescription = getString(R.string.kv_table_minimum, strategy.tableMinText)
+		shareButton.visibility = if (userStrategyForActions == null) View.VISIBLE else View.GONE
 		actionsButton.visibility = if (userStrategyForActions == null) View.GONE else View.VISIBLE
 		updateSubmissionStatusText()
 
@@ -257,6 +266,7 @@ class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 			getString(R.string.user_strategy_action_edit),
 			getString(R.string.user_strategy_action_duplicate),
 			if (current.isSubmitted) getString(R.string.user_strategy_action_resubmit) else getString(R.string.user_strategy_action_submit),
+			getString(R.string.user_strategy_action_share),
 			getString(R.string.user_strategy_action_delete)
 		)
 
@@ -267,11 +277,39 @@ class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 					0 -> beginEditingFromDetail(current)
 					1 -> duplicateFromDetail(current)
 					2 -> submitFromDetail(current)
-					3 -> confirmDeleteFromDetail(current)
+					3 -> shareUserStrategy(current)
+					4 -> confirmDeleteFromDetail(current)
 				}
 			}
 			.setNegativeButton(R.string.close_button, null)
 			.show()
+	}
+
+	private fun shareCurrentStrategy() {
+		val strategy = displayedStrategy ?: return
+		val shareBody = StrategyShareFormatter.formatCoreStrategy(strategy)
+		startShareFlow(strategy.name, shareBody)
+	}
+
+	private fun shareUserStrategy(strategy: UserStrategy) {
+		val shareBody = StrategyShareFormatter.formatUserStrategy(strategy)
+		startShareFlow(strategy.name, shareBody)
+	}
+
+	private fun startShareFlow(strategyName: String, shareBody: String) {
+		val shareIntent = StrategyShareService.createShareIntent(
+			context = requireContext(),
+			strategyName = strategyName,
+			shareBody = shareBody
+		)
+		if (shareIntent == null) {
+			AlertDialog.Builder(requireContext())
+				.setMessage(R.string.share_strategy_no_app)
+				.setPositiveButton(android.R.string.ok, null)
+				.show()
+			return
+		}
+		startActivity(shareIntent)
 	}
 
 	private fun beginEditingFromDetail(strategy: UserStrategy) {
