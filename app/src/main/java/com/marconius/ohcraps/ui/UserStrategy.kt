@@ -11,5 +11,6 @@ data class UserStrategy(
 	val dateCreatedMillis: Long,
 	val dateLastEditedMillis: Long?,
 	val isSubmitted: Boolean,
+	val hasBeenSubmitted: Boolean,
 	val submissionCount: Int
 )

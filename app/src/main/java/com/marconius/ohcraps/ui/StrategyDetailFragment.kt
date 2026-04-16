@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.accessibility.AccessibilityEvent
 import android.widget.LinearLayout
+import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
@@ -200,9 +201,11 @@ class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 
 		submissionStatusText.visibility = View.VISIBLE
 		submissionStatusText.text = when {
-			currentUserStrategy.submissionCount <= 0 -> getString(R.string.user_strategy_submit_ready)
-			currentUserStrategy.submissionCount == 1 -> getString(R.string.user_strategy_submit_done)
-			else -> getString(R.string.user_strategy_resubmit_done)
+			currentUserStrategy.isSubmitted -> getString(R.string.user_strategy_submit_done)
+			currentUserStrategy.hasBeenSubmitted && currentUserStrategy.dateLastEditedMillis != null -> {
+				getString(R.string.user_strategy_resubmit_ready)
+			}
+			else -> getString(R.string.user_strategy_submit_ready)
 		}
 	}
 
@@ -262,27 +265,34 @@ class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 
 	private fun showUserStrategyActionsDialog() {
 		val current = userStrategyForActions ?: return
-		val options = arrayOf(
-			getString(R.string.user_strategy_action_edit),
-			getString(R.string.user_strategy_action_duplicate),
-			if (current.isSubmitted) getString(R.string.user_strategy_action_resubmit) else getString(R.string.user_strategy_action_submit),
-			getString(R.string.user_strategy_action_share),
-			getString(R.string.user_strategy_action_delete)
-		)
-
-		AlertDialog.Builder(requireContext())
-			.setTitle(getString(R.string.user_strategy_actions_for, current.name))
-			.setItems(options) { _, which ->
-				when (which) {
-					0 -> beginEditingFromDetail(current)
-					1 -> duplicateFromDetail(current)
-					2 -> submitFromDetail(current)
-					3 -> shareUserStrategy(current)
-					4 -> confirmDeleteFromDetail(current)
+		val popupMenu = PopupMenu(requireContext(), actionsButton)
+		popupMenu.menu.apply {
+			add(0, actionEditId, 0, getString(R.string.user_strategy_action_edit))
+			add(0, actionDuplicateId, 1, getString(R.string.user_strategy_action_duplicate))
+			add(
+				0,
+				actionSubmitId,
+				2,
+				if (current.isSubmitted) {
+					getString(R.string.user_strategy_action_resubmit)
+				} else {
+					getString(R.string.user_strategy_action_submit)
 				}
+			)
+			add(0, actionShareId, 3, getString(R.string.user_strategy_action_share))
+			add(0, actionDeleteId, 4, getString(R.string.user_strategy_action_delete))
+		}
+		popupMenu.setOnMenuItemClickListener { item ->
+			when (item.itemId) {
+				actionEditId -> beginEditingFromDetail(current)
+				actionDuplicateId -> duplicateFromDetail(current)
+				actionSubmitId -> submitFromDetail(current)
+				actionShareId -> shareUserStrategy(current)
+				actionDeleteId -> confirmDeleteFromDetail(current)
 			}
-			.setNegativeButton(R.string.close_button, null)
-			.show()
+			true
+		}
+		popupMenu.show()
 	}
 
 	private fun shareCurrentStrategy() {
@@ -346,7 +356,7 @@ class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 	private fun submitFromDetail(strategy: UserStrategy) {
 		AlertDialog.Builder(requireContext())
 			.setTitle(
-				if (strategy.submissionCount > 0) {
+				if (strategy.isSubmitted) {
 					R.string.user_strategy_resubmit_confirm_title
 				} else {
 					R.string.user_strategy_submit_confirm_title
@@ -489,6 +499,11 @@ class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 	}
 
 	companion object {
+		private const val actionEditId = 1
+		private const val actionDuplicateId = 2
+		private const val actionSubmitId = 3
+		private const val actionShareId = 4
+		private const val actionDeleteId = 5
 		private const val submissionRecipient = "marco@marconius.com"
 		const val focusTargetArg = "detailFocusTarget"
 		const val focusTargetTitle = "title"

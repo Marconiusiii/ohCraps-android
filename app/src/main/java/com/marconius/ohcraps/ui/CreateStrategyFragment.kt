@@ -54,6 +54,7 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 	private var userStrategies: List<UserStrategy> = emptyList()
 	private var editingStrategyId: String? = null
 	private var editingStrategyName: String = ""
+	private var editingOriginalStrategyName: String = ""
 	private var editingOriginStrategyId: String? = null
 	private var editingReturnTarget: EditReturnTarget = EditReturnTarget.List
 	private var currentMode: Mode = Mode.Create
@@ -155,11 +156,7 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 
 	private fun setupFormButtons() {
 		primaryActionButton.setOnClickListener {
-			if (editingStrategyId == null) {
-				saveNewStrategy()
-			} else {
-				saveEditedStrategy()
-			}
+			validateAndMaybeSave()
 		}
 
 		secondaryActionButton.setOnClickListener {
@@ -381,7 +378,7 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 			.show()
 	}
 
-	private fun saveNewStrategy() {
+	private fun validateAndMaybeSave() {
 		val issues = validateRequiredFields()
 		applyFieldErrors(issues)
 		if (issues.isNotEmpty()) {
@@ -389,10 +386,65 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 			return
 		}
 
+		if (editingStrategyId == null) {
+			saveNewStrategy()
+		} else {
+			showSaveOptionsDialog()
+		}
+	}
+
+	private fun showSaveOptionsDialog() {
+		AlertDialog.Builder(requireContext())
+			.setTitle(R.string.create_save_strategy)
+			.setPositiveButton(R.string.create_save_original) { _, _ ->
+				saveEditedStrategy()
+			}
+			.setNeutralButton(R.string.create_save_as_new) { _, _ ->
+				saveNewStrategy(generateNewSaveName())
+			}
+			.setNegativeButton(android.R.string.cancel, null)
+			.show()
+	}
+
+	private fun generateNewSaveName(): String {
+		val typedName = nameInput.text?.toString()?.trim().orEmpty()
+		val originalName = editingOriginalStrategyName.trim()
+		if (typedName.isBlank() || originalName.isBlank() || typedName != originalName) {
+			return typedName
+		}
+
+		val usedNames = userStrategies.map { it.name.lowercase() }.toSet()
+		val baseName = extractBaseName(typedName)
+		var nextNumber = extractTrailingNumber(typedName)?.plus(1) ?: 1
+		while (true) {
+			val candidate = if (baseName.isBlank()) {
+				nextNumber.toString()
+			} else {
+				"$baseName $nextNumber"
+			}
+			if (!usedNames.contains(candidate.lowercase())) {
+				return candidate
+			}
+			nextNumber += 1
+		}
+	}
+
+	private fun extractTrailingNumber(text: String): Int? {
+		val match = Regex("^(.*?)(?:\\s+)?(\\d+)$").find(text.trim()) ?: return null
+		return match.groupValues[2].toIntOrNull()
+	}
+
+	private fun extractBaseName(text: String): String {
+		val match = Regex("^(.*?)(?:\\s+)?(\\d+)$").find(text.trim()) ?: return text.trim()
+		return match.groupValues[1].trim()
+	}
+
+	private fun saveNewStrategy(nameOverride: String? = null) {
+		val previousStrategies = userStrategies
 		userStrategies = UserStrategyStore.add(
 			context = requireContext(),
 			existing = userStrategies,
-			name = nameInput.text?.toString()?.trim().orEmpty(),
+			name = nameOverride ?: nameInput.text?.toString()?.trim().orEmpty(),
 			buyIn = buyInInput.text?.toString()?.trim().orEmpty(),
 			tableMinimum = tableMinimumInput.text?.toString()?.trim().orEmpty(),
 			steps = stepsInput.text?.toString()?.trim().orEmpty(),
@@ -403,16 +455,13 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 		resetForm()
 		renderUserStrategies()
 		renderMyStrategiesMode()
+		val newStrategyId = findNewStrategyId(previousStrategies, userStrategies)
+		if (!newStrategyId.isNullOrBlank()) {
+			restoreFocusToUserStrategy(newStrategyId)
+		}
 	}
 
 	private fun saveEditedStrategy() {
-		val issues = validateRequiredFields()
-		applyFieldErrors(issues)
-		if (issues.isNotEmpty()) {
-			showValidationDialog(issues)
-			return
-		}
-
 		val strategyId = editingStrategyId ?: return
 		val returnTarget = editingReturnTarget
 		userStrategies = UserStrategyStore.update(
@@ -456,6 +505,7 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 	private fun exitEditingMode() {
 		editingStrategyId = null
 		editingStrategyName = ""
+		editingOriginalStrategyName = ""
 		editingOriginStrategyId = null
 		editingReturnTarget = EditReturnTarget.List
 		updateActionButtonLabels()
@@ -467,6 +517,7 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 	private fun beginEditingStrategy(strategy: UserStrategy, returnTarget: EditReturnTarget) {
 		editingStrategyId = strategy.id
 		editingStrategyName = strategy.name
+		editingOriginalStrategyName = strategy.name
 		editingOriginStrategyId = strategy.id
 		editingReturnTarget = returnTarget
 		nameInput.setText(strategy.name)
@@ -584,7 +635,7 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 	private fun submitStrategy(strategy: UserStrategy) {
 		AlertDialog.Builder(requireContext())
 			.setTitle(
-				if (strategy.submissionCount > 0) {
+				if (strategy.isSubmitted) {
 					R.string.user_strategy_resubmit_confirm_title
 				} else {
 					R.string.user_strategy_submit_confirm_title

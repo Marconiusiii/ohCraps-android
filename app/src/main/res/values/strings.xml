@@ -39,6 +39,8 @@
 	<string name="create_save_strategy">Save Strategy</string>
 	<string name="create_reset_form">Reset Form</string>
 	<string name="create_save_changes">Save Changes</string>
+	<string name="create_save_original">Save Original</string>
+	<string name="create_save_as_new">Create New</string>
 	<string name="create_cancel_editing">Cancel Editing</string>
 	<string name="create_cancel_changes_title">Cancel Changes?</string>
 	<string name="create_cancel_changes_confirm">Yes, Cancel</string>
@@ -73,9 +75,9 @@
 	<string name="user_strategy_meta_template">Created %1$s, %2$s</string>
 	<string name="user_strategy_accessibility_summary">%1$s. Created %2$s. %3$s.</string>
 	<string name="user_strategy_actions_for">Actions for %1$s</string>
-	<string name="user_strategy_submit_ready">Ready to Submit.</string>
-	<string name="user_strategy_submit_done">Submitted to Oh Craps!</string>
-	<string name="user_strategy_resubmit_done">Resubmitted to Oh Craps!</string>
+	<string name="user_strategy_submit_ready">Ready to submit.</string>
+	<string name="user_strategy_submit_done">Strategy Submitted to Oh Craps!</string>
+	<string name="user_strategy_resubmit_ready">Ready to resubmit.</string>
 	<string name="user_strategy_submit_confirm_title">Submit Strategy?</string>
 	<string name="user_strategy_resubmit_confirm_title">Resubmit Strategy?</string>
 	<string name="user_strategy_submit_confirm_message">This will open your email app.</string>

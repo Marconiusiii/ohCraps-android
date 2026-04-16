@@ -50,6 +50,7 @@ object UserStrategyStore {
 			dateCreatedMillis = now,
 			dateLastEditedMillis = null,
 			isSubmitted = false,
+			hasBeenSubmitted = false,
 			submissionCount = 0
 		)
 
@@ -74,6 +75,17 @@ object UserStrategyStore {
 			if (strategy.id != strategyId) {
 				strategy
 			} else {
+				val didChange =
+					strategy.name != name ||
+					strategy.buyIn != buyIn ||
+					strategy.tableMinimum != tableMinimum ||
+					strategy.steps != steps ||
+					strategy.notes != notes ||
+					strategy.credit != credit
+				if (!didChange) {
+					return@map strategy
+				}
+
 				strategy.copy(
 					name = name,
 					buyIn = buyIn,
@@ -83,7 +95,8 @@ object UserStrategyStore {
 					credit = credit,
 					dateLastEditedMillis = now,
 					isSubmitted = false,
-					submissionCount = 0
+					hasBeenSubmitted = strategy.hasBeenSubmitted || strategy.isSubmitted,
+					submissionCount = strategy.submissionCount
 				)
 			}
 		}
@@ -113,6 +126,7 @@ object UserStrategyStore {
 			dateCreatedMillis = now,
 			dateLastEditedMillis = null,
 			isSubmitted = false,
+			hasBeenSubmitted = false,
 			submissionCount = 0
 		)
 		val updated = existing + copy
@@ -129,6 +143,7 @@ object UserStrategyStore {
 			if (strategy.id == strategyId) {
 				strategy.copy(
 					isSubmitted = true,
+					hasBeenSubmitted = true,
 					submissionCount = strategy.submissionCount + 1
 				)
 			} else {
@@ -148,7 +163,7 @@ object UserStrategyStore {
 		context.getSharedPreferences(prefsName, Context.MODE_PRIVATE)
 			.edit()
 			.putString(strategiesKey, jsonArray.toString())
-			.commit()
+			.apply()
 	}
 
 	private fun strategyFromJson(jsonObject: JSONObject): UserStrategy? {
@@ -178,6 +193,12 @@ object UserStrategyStore {
 				null
 			},
 			isSubmitted = jsonObject.optBoolean("isSubmitted", false),
+			hasBeenSubmitted = when {
+				jsonObject.has("hasBeenSubmitted") -> jsonObject.optBoolean("hasBeenSubmitted", false)
+				jsonObject.optBoolean("isSubmitted", false) -> true
+				jsonObject.optInt("submissionCount", 0) > 0 -> true
+				else -> false
+			},
 			submissionCount = when {
 				jsonObject.has("submissionCount") -> jsonObject.optInt("submissionCount", 0)
 				jsonObject.optBoolean("isSubmitted", false) -> 1
@@ -198,6 +219,7 @@ object UserStrategyStore {
 			.put("dateCreatedMillis", strategy.dateCreatedMillis)
 			.put("dateLastEditedMillis", strategy.dateLastEditedMillis)
 			.put("isSubmitted", strategy.isSubmitted)
+			.put("hasBeenSubmitted", strategy.hasBeenSubmitted)
 			.put("submissionCount", strategy.submissionCount)
 	}
 }
