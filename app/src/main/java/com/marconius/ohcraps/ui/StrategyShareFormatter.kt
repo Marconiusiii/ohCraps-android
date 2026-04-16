@@ -10,10 +10,14 @@ object StrategyShareFormatter {
 
 	fun formatCoreStrategy(strategy: Strategy): String {
 		val lines = mutableListOf<String>()
+		lines.add("Strategy Name:")
 		lines.add(strategy.name)
 		lines.add("")
-		lines.add("Buy-in: ${strategy.buyInText}")
-		lines.add("Table Minimum: ${strategy.tableMinText}")
+		lines.add("Buy-in:")
+		lines.add(strategy.buyInText)
+		lines.add("")
+		lines.add("Table Minimum:")
+		lines.add(strategy.tableMinText)
 
 		appendOptionalSection(lines, "Notes", strategy.notes)
 		appendOptionalSection(lines, "Credit", strategy.credit)
@@ -65,10 +69,14 @@ object StrategyShareFormatter {
 
 	fun formatUserStrategy(strategy: UserStrategy): String {
 		val lines = mutableListOf<String>()
+		lines.add("Strategy Name:")
 		lines.add(strategy.name)
 		lines.add("")
-		lines.add("Buy-in: ${strategy.buyIn}")
-		lines.add("Table Minimum: ${strategy.tableMinimum}")
+		lines.add("Buy-in:")
+		lines.add(strategy.buyIn)
+		lines.add("")
+		lines.add("Table Minimum:")
+		lines.add(strategy.tableMinimum)
 
 		appendOptionalSection(lines, "Notes", strategy.notes)
 		appendOptionalSection(lines, "Credit", strategy.credit)

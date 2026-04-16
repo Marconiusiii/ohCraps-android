@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.button.MaterialButton
+import com.marconius.ohcraps.MainActivity
 import com.marconius.ohcraps.R
 import java.util.Calendar
 
@@ -36,6 +37,7 @@ class AboutFragment : Fragment(R.layout.fragment_about) {
 			contentContainer.addView(createParagraphView(paragraph))
 		}
 
+		contentContainer.addView(createWhatsNewButton())
 		contentContainer.addView(createHeadingView(getString(R.string.about_references_heading)))
 		contentContainer.addView(createParagraphView(aboutReferenceIntro))
 		addLinkTextViews(aboutReferenceLinks)
@@ -125,6 +127,22 @@ class AboutFragment : Fragment(R.layout.fragment_about) {
 			isAllCaps = false
 			setOnClickListener {
 				openFeedbackEmailComposer()
+			}
+		}
+	}
+
+	private fun createWhatsNewButton(): MaterialButton {
+		return MaterialButton(requireContext(), null, com.google.android.material.R.attr.materialButtonOutlinedStyle).apply {
+			layoutParams = LinearLayout.LayoutParams(
+				ViewGroup.LayoutParams.WRAP_CONTENT,
+				ViewGroup.LayoutParams.WRAP_CONTENT
+			).apply {
+				bottomMargin = resources.getDimensionPixelSize(R.dimen.controlSpacing)
+			}
+			text = getString(R.string.about_whats_new_button)
+			isAllCaps = false
+			setOnClickListener {
+				(activity as? MainActivity)?.showWhatsNew()
 			}
 		}
 	}
