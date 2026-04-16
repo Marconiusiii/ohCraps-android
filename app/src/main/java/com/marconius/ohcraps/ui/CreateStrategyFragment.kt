@@ -783,20 +783,28 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 		val position = userStrategyListAdapter.findPositionById(strategyId) ?: return
 		myStrategiesRecyclerView.scrollToPosition(position)
 		myStrategiesRecyclerView.post {
-			val viewHolder = myStrategiesRecyclerView.findViewHolderForAdapterPosition(position) ?: return@post
-			viewHolder.itemView.requestFocus()
-			viewHolder.itemView.performAccessibilityAction(
-				android.view.accessibility.AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS,
-				null
-			)
-			viewHolder.itemView.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED)
-			viewHolder.itemView.postDelayed({
-				viewHolder.itemView.performAccessibilityAction(
-					android.view.accessibility.AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS,
-					null
-				)
-			}, 180L)
+			focusUserStrategyRowAtPosition(position, retryCount = 0)
 		}
+	}
+
+	private fun focusUserStrategyRowAtPosition(position: Int, retryCount: Int) {
+		val viewHolder = myStrategiesRecyclerView.findViewHolderForAdapterPosition(position)
+		if (viewHolder == null) {
+			if (retryCount < maxFocusRetries) {
+				myStrategiesRecyclerView.postDelayed(
+					{ focusUserStrategyRowAtPosition(position, retryCount + 1) },
+					focusRetryDelayMs
+				)
+			}
+			return
+		}
+
+		viewHolder.itemView.requestFocus()
+		viewHolder.itemView.performAccessibilityAction(
+			android.view.accessibility.AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS,
+			null
+		)
+		viewHolder.itemView.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED)
 	}
 
 	private fun restoreFocusAfterDelete(deletedIndex: Int) {
@@ -871,6 +879,8 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 		const val detailActionStrategyIdKey = "detailActionStrategyId"
 		const val detailActionEdit = "edit"
 		const val detailActionFocusListTitle = "focusListTitle"
+		private const val maxFocusRetries = 4
+		private const val focusRetryDelayMs = 70L
 		private const val submissionRecipient = "marco@marconius.com"
 	}
 }

@@ -382,12 +382,6 @@ class StrategiesFragment : Fragment(R.layout.fragment_strategies) {
 			null
 		)
 		viewHolder.itemView.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED)
-		viewHolder.itemView.postDelayed({
-			viewHolder.itemView.performAccessibilityAction(
-				android.view.accessibility.AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS,
-				null
-			)
-		}, 160L)
 	}
 
 	override fun onDestroyView() {

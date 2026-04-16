@@ -10,13 +10,27 @@ object UserStrategyStore {
 	private const val prefsName = "userStrategiesPrefs"
 	private const val strategiesKey = "userStrategiesJson"
 	private const val legacyStrategiesKey = "userStrategies"
+	@Volatile
+	private var cachedStrategies: List<UserStrategy>? = null
 
 	fun load(context: Context): List<UserStrategy> {
+		val existingCache = cachedStrategies
+		if (existingCache != null) {
+			return existingCache
+		}
+
 		val prefs = context.getSharedPreferences(prefsName, Context.MODE_PRIVATE)
 		val raw = prefs.getString(strategiesKey, null)
 			?: prefs.getString(legacyStrategiesKey, null)
-			?: return emptyList()
-		val jsonArray = runCatching { JSONArray(raw) }.getOrNull() ?: return emptyList()
+		if (raw == null) {
+			cachedStrategies = emptyList()
+			return emptyList()
+		}
+		val jsonArray = runCatching { JSONArray(raw) }.getOrNull()
+		if (jsonArray == null) {
+			cachedStrategies = emptyList()
+			return emptyList()
+		}
 
 		val output = mutableListOf<UserStrategy>()
 		for (index in 0 until jsonArray.length()) {
@@ -25,6 +39,7 @@ object UserStrategyStore {
 			output.add(strategy)
 		}
 
+		cachedStrategies = output
 		return output
 	}
 
@@ -155,6 +170,7 @@ object UserStrategyStore {
 	}
 
 	private fun save(context: Context, strategies: List<UserStrategy>) {
+		cachedStrategies = strategies
 		val jsonArray = JSONArray()
 		for (strategy in strategies) {
 			jsonArray.put(strategyToJson(strategy))

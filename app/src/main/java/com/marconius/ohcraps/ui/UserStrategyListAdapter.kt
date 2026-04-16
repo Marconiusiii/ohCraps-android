@@ -6,6 +6,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.ViewCompat
 import androidx.core.view.accessibility.AccessibilityViewCommand
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.marconius.ohcraps.R
 import java.text.DateFormat
@@ -20,21 +22,21 @@ class UserStrategyListAdapter(
 	private val onSubmit: (strategy: UserStrategy) -> Unit,
 	private val onShare: (strategy: UserStrategy) -> Unit,
 	private val onDelete: (strategy: UserStrategy) -> Unit
-) : RecyclerView.Adapter<UserStrategyListAdapter.UserStrategyViewHolder>() {
+) : ListAdapter<UserStrategy, UserStrategyListAdapter.UserStrategyViewHolder>(diffCallback) {
 
-	private val strategies = mutableListOf<UserStrategy>()
-	private val strategyIdToPosition = mutableMapOf<String, Int>()
 	private val dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault())
 
-	fun submitList(newStrategies: List<UserStrategy>) {
-		strategies.clear()
-		strategies.addAll(newStrategies)
-		rebuildIndex()
-		notifyDataSetChanged()
+	init {
+		setHasStableIds(true)
+	}
+
+	override fun getItemId(position: Int): Long {
+		return getItem(position).id.hashCode().toLong()
 	}
 
 	fun findPositionById(strategyId: String): Int? {
-		return strategyIdToPosition[strategyId]
+		val position = currentList.indexOfFirst { it.id == strategyId }
+		return if (position >= 0) position else null
 	}
 
 	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserStrategyViewHolder {
@@ -53,16 +55,7 @@ class UserStrategyListAdapter(
 	}
 
 	override fun onBindViewHolder(holder: UserStrategyViewHolder, position: Int) {
-		holder.bind(strategies[position])
-	}
-
-	override fun getItemCount(): Int = strategies.size
-
-	private fun rebuildIndex() {
-		strategyIdToPosition.clear()
-		for (index in strategies.indices) {
-			strategyIdToPosition[strategies[index].id] = index
-		}
+		holder.bind(getItem(position))
 	}
 
 	class UserStrategyViewHolder(
@@ -192,5 +185,15 @@ class UserStrategyListAdapter(
 
 	private companion object {
 		const val noActionId = -1
+
+		val diffCallback = object : DiffUtil.ItemCallback<UserStrategy>() {
+			override fun areItemsTheSame(oldItem: UserStrategy, newItem: UserStrategy): Boolean {
+				return oldItem.id == newItem.id
+			}
+
+			override fun areContentsTheSame(oldItem: UserStrategy, newItem: UserStrategy): Boolean {
+				return oldItem == newItem
+			}
+		}
 	}
 }
