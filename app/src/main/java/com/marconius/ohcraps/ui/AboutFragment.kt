@@ -37,7 +37,9 @@ class AboutFragment : Fragment(R.layout.fragment_about) {
 			contentContainer.addView(createParagraphView(paragraph))
 		}
 
-		contentContainer.addView(createWhatsNewButton())
+		if ((activity as? MainActivity)?.isWhatsNewAvailable() == true) {
+			contentContainer.addView(createWhatsNewButton())
+		}
 		contentContainer.addView(createHeadingView(getString(R.string.about_references_heading)))
 		contentContainer.addView(createParagraphView(aboutReferenceIntro))
 		addLinkTextViews(aboutReferenceLinks)

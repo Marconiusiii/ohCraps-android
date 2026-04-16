@@ -9,12 +9,6 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
-	private val whatsNewVersion = "1.2.4"
-	private val whatsNewItems = listOf(
-		"Added strategies: B Squeeze, Build and Bail, and We Ball.",
-		"App optimization and cleanup to make everything load faster."
-	)
-
 	private lateinit var bottomNav: BottomNavigationView
 	private var isBottomNavForcedHidden: Boolean = false
 	private var isWhatsNewShowing: Boolean = false
@@ -62,13 +56,26 @@ class MainActivity : AppCompatActivity() {
 	}
 
 	fun showWhatsNew() {
+		if (!isWhatsNewAvailable()) {
+			return
+		}
 		showWhatsNewDialog()
 	}
 
+	fun isWhatsNewAvailable(): Boolean {
+		val currentVersion = getCurrentVersionName()
+		return isVersionGreaterThanInitialRelease(currentVersion) && getWhatsNewItems(currentVersion).isNotEmpty()
+	}
+
 	private fun showWhatsNewIfNeeded() {
+		if (!isWhatsNewAvailable()) {
+			return
+		}
+
+		val currentVersion = getCurrentVersionName()
 		val preferences = getSharedPreferences(whatsNewPreferencesName, MODE_PRIVATE)
 		val seenVersion = preferences.getString(whatsNewSeenVersionKey, "") ?: ""
-		if (seenVersion != whatsNewVersion) {
+		if (seenVersion != currentVersion) {
 			showWhatsNewDialog()
 		}
 	}
@@ -78,28 +85,68 @@ class MainActivity : AppCompatActivity() {
 			return
 		}
 
+		val currentVersion = getCurrentVersionName()
+		val whatsNewItems = getWhatsNewItems(currentVersion)
+		if (!isVersionGreaterThanInitialRelease(currentVersion) || whatsNewItems.isEmpty()) {
+			return
+		}
+
 		isWhatsNewShowing = true
 		val message = whatsNewItems.joinToString(separator = "\n") { "• $it" }
 
 		AlertDialog.Builder(this)
-			.setTitle(getString(R.string.whats_new_title, whatsNewVersion))
+			.setTitle(getString(R.string.whats_new_title, currentVersion))
 			.setMessage(message)
 			.setPositiveButton(R.string.close_button, null)
 			.setOnDismissListener {
-				markWhatsNewSeen()
+				markWhatsNewSeen(currentVersion)
 				isWhatsNewShowing = false
 			}
 			.show()
 	}
 
-	private fun markWhatsNewSeen() {
+	private fun markWhatsNewSeen(versionName: String) {
 		getSharedPreferences(whatsNewPreferencesName, MODE_PRIVATE)
 			.edit()
-			.putString(whatsNewSeenVersionKey, whatsNewVersion)
+			.putString(whatsNewSeenVersionKey, versionName)
 			.apply()
 	}
 
+	private fun getCurrentVersionName(): String {
+		return runCatching {
+			packageManager.getPackageInfo(packageName, 0).versionName
+		}.getOrNull().orEmpty().ifBlank { initialAndroidVersion }
+	}
+
+	private fun getWhatsNewItems(versionName: String): List<String> {
+		return when (versionName) {
+			initialAndroidVersion -> emptyList()
+			else -> emptyList()
+		}
+	}
+
+	private fun isVersionGreaterThanInitialRelease(versionName: String): Boolean {
+		return compareVersions(versionName, initialAndroidVersion) > 0
+	}
+
+	private fun compareVersions(firstVersion: String, secondVersion: String): Int {
+		val firstParts = firstVersion.split(".")
+		val secondParts = secondVersion.split(".")
+		val maxLength = maxOf(firstParts.size, secondParts.size)
+
+		for (index in 0 until maxLength) {
+			val firstPart = firstParts.getOrNull(index)?.toIntOrNull() ?: 0
+			val secondPart = secondParts.getOrNull(index)?.toIntOrNull() ?: 0
+			if (firstPart != secondPart) {
+				return firstPart.compareTo(secondPart)
+			}
+		}
+
+		return 0
+	}
+
 	private companion object {
+		const val initialAndroidVersion = "1.0.0"
 		const val whatsNewPreferencesName = "ohCrapsWhatsNew"
 		const val whatsNewSeenVersionKey = "whatsNewSeenVersion"
 	}
