@@ -8,6 +8,7 @@ import android.view.accessibility.AccessibilityEvent
 import android.widget.LinearLayout
 import android.widget.PopupMenu
 import android.widget.TextView
+import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
@@ -86,12 +87,20 @@ class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 
 	private fun bindBackNavigation() {
 		backButton.setOnClickListener {
-			findNavController().previousBackStackEntry?.savedStateHandle?.set(
-				focusKeyForBackNavigation,
-				strategyIdForFocus
-			)
-			findNavController().navigateUp()
+			navigateBackWithFocusRestore()
 		}
+
+		requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+			navigateBackWithFocusRestore()
+		}
+	}
+
+	private fun navigateBackWithFocusRestore() {
+		findNavController().previousBackStackEntry?.savedStateHandle?.set(
+			focusKeyForBackNavigation,
+			strategyIdForFocus
+		)
+		findNavController().navigateUp()
 	}
 
 	private fun bindActionsMenu() {
