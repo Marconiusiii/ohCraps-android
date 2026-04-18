@@ -25,7 +25,7 @@ android {
 		applicationId = "com.marconius.ohcraps"
 		minSdk = 23
 		targetSdk = 36
-		versionCode = 1
+		versionCode = 2
 		versionName = "1.0.0"
 
 		testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -42,13 +42,14 @@ android {
 		}
 	}
 
-	buildTypes {
-		release {
-			isMinifyEnabled = false
-			proguardFiles(
-				getDefaultProguardFile("proguard-android-optimize.txt"),
-				"proguard-rules.pro"
-			)
+		buildTypes {
+			release {
+				isMinifyEnabled = true
+				isShrinkResources = true
+				proguardFiles(
+					getDefaultProguardFile("proguard-android-optimize.txt"),
+					"proguard-rules.pro"
+				)
 			if (keystorePropertiesFile.exists()) {
 				signingConfig = signingConfigs.getByName("release")
 			} else if (isReleaseTaskRequested) {
