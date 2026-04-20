@@ -70,11 +70,37 @@ class MainActivity : AppCompatActivity() {
 	}
 
 	private fun setupBottomNavigation() {
-		for ((destinationId, button) in navButtons) {
+		ViewCompat.setAccessibilityDelegate(bottomNav, object : AccessibilityDelegateCompat() {
+			override fun onInitializeAccessibilityNodeInfo(host: View, info: AccessibilityNodeInfoCompat) {
+				super.onInitializeAccessibilityNodeInfo(host, info)
+				info.className = "android.widget.TabWidget"
+				info.setCollectionInfo(AccessibilityNodeInfoCompat.CollectionInfoCompat.obtain(
+					1,
+					navButtons.size,
+					false,
+					AccessibilityNodeInfoCompat.CollectionInfoCompat.SELECTION_MODE_SINGLE
+				))
+				info.contentDescription = "Bottom navigation"
+			}
+		})
+
+		for ((index, navButtonEntry) in navButtons.withIndex()) {
+			val (destinationId, button) = navButtonEntry
 			ViewCompat.setAccessibilityDelegate(button, object : AccessibilityDelegateCompat() {
 				override fun onInitializeAccessibilityNodeInfo(host: View, info: AccessibilityNodeInfoCompat) {
 					super.onInitializeAccessibilityNodeInfo(host, info)
 					info.isSelected = host.isSelected
+					info.className = "android.widget.Button"
+					info.roleDescription = "Tab"
+					info.setCollectionItemInfo(AccessibilityNodeInfoCompat.CollectionItemInfoCompat.obtain(
+						0,
+						1,
+						index,
+						1,
+						false,
+						host.isSelected
+					))
+					info.contentDescription = "${button.text}, ${index + 1} of ${navButtons.size}"
 				}
 			})
 			button.setOnClickListener {
