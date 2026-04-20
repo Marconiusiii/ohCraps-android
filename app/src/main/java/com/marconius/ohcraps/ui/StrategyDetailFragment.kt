@@ -132,14 +132,11 @@ class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 			override fun onInitializeAccessibilityNodeInfo(host: View, info: AccessibilityNodeInfoCompat) {
 				super.onInitializeAccessibilityNodeInfo(host, info)
 				info.className = "android.widget.Button"
-				info.isCheckable = true
-				info.isChecked = isFavoriteSelected
 				info.contentDescription = getString(
 					R.string.favorite_strategy_accessibility,
 					getString(R.string.favorite_strategy_toggle),
 					getFavoriteStateLabel(isFavoriteSelected)
 				)
-				info.stateDescription = getFavoriteStateLabel(isFavoriteSelected)
 			}
 		})
 		ViewCompat.replaceAccessibilityAction(
@@ -279,13 +276,11 @@ class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 	private fun setFavoriteChecked(isChecked: Boolean, persistChange: Boolean = true) {
 		isFavoriteSelected = isChecked
 		favoriteIcon.isSelected = isChecked
-		favoriteContainer.isSelected = isChecked
 		favoriteContainer.contentDescription = getString(
 			R.string.favorite_strategy_accessibility,
 			getString(R.string.favorite_strategy_toggle),
 			getFavoriteStateLabel(isChecked)
 		)
-		favoriteContainer.stateDescription = getFavoriteStateLabel(isChecked)
 		if (persistChange && userStrategyForActions == null && strategyIdForFocus.isNotEmpty()) {
 			FavoriteStrategyStore.setFavorite(requireContext(), strategyIdForFocus, isChecked)
 		}
