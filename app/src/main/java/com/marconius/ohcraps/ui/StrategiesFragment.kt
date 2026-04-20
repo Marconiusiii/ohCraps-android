@@ -49,15 +49,22 @@ class StrategiesFragment : Fragment(R.layout.fragment_strategies) {
 	private var selectedBuyInFilter: BuyInFilter? = null
 	private var searchAnnouncementJob: Job? = null
 	private var pendingFocusStrategyId: String? = null
+	private var favoriteStrategyIds: Set<String> = emptySet()
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		bindViews(view)
+		favoriteStrategyIds = FavoriteStrategyStore.load(requireContext())
 		setupList()
 		setupSearch()
 		setupFilterButtons()
 		observeFocusRestoreRequests()
 		loadStrategies()
+	}
+
+	override fun onResume() {
+		super.onResume()
+		refreshFavoriteStrategies()
 	}
 
 	private fun bindViews(rootView: View) {
@@ -172,7 +179,8 @@ class StrategiesFragment : Fragment(R.layout.fragment_strategies) {
 			?.getLiveData<String>(focusStrategyIdKey)
 			?.observe(viewLifecycleOwner) { strategyId ->
 				pendingFocusStrategyId = strategyId
-				tryRestorePendingFocus()
+				favoriteStrategyIds = FavoriteStrategyStore.load(requireContext())
+				renderFilteredStrategies()
 				findNavController().currentBackStackEntry?.savedStateHandle?.remove<String>(focusStrategyIdKey)
 			}
 	}
@@ -264,12 +272,26 @@ class StrategiesFragment : Fragment(R.layout.fragment_strategies) {
 	}
 
 	private fun buildSectionedListItems(strategies: List<Strategy>): List<StrategyListItem> {
-		val grouped = strategies.groupBy { strategy ->
+		val favoriteStrategies = strategies
+			.filter { strategy -> favoriteStrategyIds.contains(strategy.id) }
+			.sortedWith { left, right -> compareStrategies(left, right) }
+		val nonFavoriteStrategies = strategies.filterNot { strategy ->
+			favoriteStrategyIds.contains(strategy.id)
+		}
+
+		val grouped = nonFavoriteStrategies.groupBy { strategy ->
 			resolveSectionKey(strategy)
 		}
 
 		val sortedSectionKeys = grouped.keys.sorted()
 		val outputItems = mutableListOf<StrategyListItem>()
+
+		if (favoriteStrategies.isNotEmpty()) {
+			outputItems.add(StrategyListItem.Header(SectionKey.Favorites))
+			for (strategy in favoriteStrategies) {
+				outputItems.add(StrategyListItem.StrategyEntry(strategy))
+			}
+		}
 
 		for (sectionKey in sortedSectionKeys) {
 			outputItems.add(StrategyListItem.Header(sectionKey))
@@ -352,6 +374,14 @@ class StrategiesFragment : Fragment(R.layout.fragment_strategies) {
 		val strategyId = pendingFocusStrategyId ?: return
 		if (restoreFocusToStrategy(strategyId)) {
 			pendingFocusStrategyId = null
+		}
+	}
+
+	private fun refreshFavoriteStrategies() {
+		val updatedFavoriteIds = FavoriteStrategyStore.load(requireContext())
+		if (updatedFavoriteIds != favoriteStrategyIds) {
+			favoriteStrategyIds = updatedFavoriteIds
+			renderFilteredStrategies()
 		}
 	}
 

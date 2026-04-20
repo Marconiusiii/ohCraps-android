@@ -18,13 +18,52 @@
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintEnd_toEndOf="parent" />
 
-	<com.google.android.material.bottomnavigation.BottomNavigationView
+	<LinearLayout
 		android:id="@+id/bottomNav"
 		android:layout_width="0dp"
 		android:layout_height="wrap_content"
-		app:menu="@menu/bottom_nav_menu"
+		android:orientation="horizontal"
+		android:background="@drawable/bg_bottom_nav_rail"
+		android:paddingStart="@dimen/bottomNavRailPadding"
+		android:paddingTop="@dimen/bottomNavRailPadding"
+		android:paddingEnd="@dimen/bottomNavRailPadding"
+		android:paddingBottom="@dimen/bottomNavRailPadding"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintEnd_toEndOf="parent" />
+		app:layout_constraintEnd_toEndOf="parent">
+
+		<androidx.appcompat.widget.AppCompatButton
+			android:id="@+id/navStrategiesButton"
+			style="@style/Widget.OhCraps.BottomRailButton"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:text="@string/tab_strategies" />
+
+		<androidx.appcompat.widget.AppCompatButton
+			android:id="@+id/navRulesButton"
+			style="@style/Widget.OhCraps.BottomRailButton"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:text="@string/tab_rules" />
+
+		<androidx.appcompat.widget.AppCompatButton
+			android:id="@+id/navCreateStrategyButton"
+			style="@style/Widget.OhCraps.BottomRailButton"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:text="@string/tab_create_strategy" />
+
+		<androidx.appcompat.widget.AppCompatButton
+			android:id="@+id/navAboutButton"
+			style="@style/Widget.OhCraps.BottomRailButton"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:text="@string/tab_about" />
+
+	</LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

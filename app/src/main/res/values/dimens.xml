@@ -5,4 +5,7 @@
 	<dimen name="controlSpacing">8dp</dimen>
 	<dimen name="listItemPaddingVertical">12dp</dimen>
 	<dimen name="listItemPaddingHorizontal">16dp</dimen>
+	<dimen name="bottomNavRailPadding">8dp</dimen>
+	<dimen name="bottomNavButtonMinHeight">60dp</dimen>
+	<dimen name="bottomNavButtonTextSize">12sp</dimen>
 </resources>

@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.switchmaterial.SwitchMaterial
 import com.marconius.ohcraps.R
 import com.marconius.ohcraps.strategies.Strategy
 import com.marconius.ohcraps.strategies.StrategyContentBlock
@@ -30,6 +31,7 @@ class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 	private lateinit var backButton: MaterialButton
 	private lateinit var shareButton: MaterialButton
 	private lateinit var actionsButton: MaterialButton
+	private lateinit var favoriteToggle: SwitchMaterial
 	private lateinit var screenTitle: TextView
 	private lateinit var submissionStatusText: TextView
 	private lateinit var buyInValue: TextView
@@ -47,6 +49,7 @@ class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 	private var userStrategyForActions: UserStrategy? = null
 	private var displayedStrategy: Strategy? = null
 	private var pendingDetailSubmitStrategyId: String? = null
+	private var isBindingFavoriteToggle: Boolean = false
 
 	private val emailLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
 		val strategyId = pendingDetailSubmitStrategyId ?: return@registerForActivityResult
@@ -74,6 +77,7 @@ class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 		backButton = rootView.findViewById(R.id.backButton)
 		shareButton = rootView.findViewById(R.id.shareButton)
 		actionsButton = rootView.findViewById(R.id.actionsButton)
+		favoriteToggle = rootView.findViewById(R.id.favoriteToggle)
 		screenTitle = rootView.findViewById(R.id.screenTitle)
 		submissionStatusText = rootView.findViewById(R.id.submissionStatusText)
 		buyInValue = rootView.findViewById(R.id.buyInValue)
@@ -109,6 +113,12 @@ class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 		}
 		shareButton.setOnClickListener {
 			shareCurrentStrategy()
+		}
+		favoriteToggle.setOnCheckedChangeListener { _, isChecked ->
+			if (isBindingFavoriteToggle || userStrategyForActions != null || strategyIdForFocus.isEmpty()) {
+				return@setOnCheckedChangeListener
+			}
+			FavoriteStrategyStore.setFavorite(requireContext(), strategyIdForFocus, isChecked)
 		}
 	}
 
@@ -168,6 +178,7 @@ class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 			notesSection.visibility = View.GONE
 			creditSection.visibility = View.GONE
 			stepsContainer.removeAllViews()
+			favoriteToggle.visibility = View.GONE
 			shareButton.visibility = View.GONE
 			actionsButton.visibility = View.GONE
 			submissionStatusText.visibility = View.GONE
@@ -180,6 +191,7 @@ class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 
 		buyInValue.contentDescription = getString(R.string.kv_buy_in, strategy.buyInText)
 		tableMinValue.contentDescription = getString(R.string.kv_table_minimum, strategy.tableMinText)
+		bindFavoriteToggle(strategy)
 		shareButton.visibility = if (userStrategyForActions == null) View.VISIBLE else View.GONE
 		actionsButton.visibility = if (userStrategyForActions == null) View.GONE else View.VISIBLE
 		updateSubmissionStatusText()
@@ -216,6 +228,18 @@ class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 			}
 			else -> getString(R.string.user_strategy_submit_ready)
 		}
+	}
+
+	private fun bindFavoriteToggle(strategy: Strategy) {
+		if (userStrategyForActions != null) {
+			favoriteToggle.visibility = View.GONE
+			return
+		}
+
+		favoriteToggle.visibility = View.VISIBLE
+		isBindingFavoriteToggle = true
+		favoriteToggle.isChecked = FavoriteStrategyStore.isFavorite(requireContext(), strategy.id)
+		isBindingFavoriteToggle = false
 	}
 
 	private fun renderSteps(contentBlocks: List<StrategyContentBlock>) {

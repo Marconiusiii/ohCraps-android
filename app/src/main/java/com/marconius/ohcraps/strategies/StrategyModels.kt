@@ -36,17 +36,21 @@ enum class BuyInFilter(val label: String) {
 }
 
 sealed class SectionKey : Comparable<SectionKey> {
+	data object Favorites : SectionKey()
 	data object Number : SectionKey()
 	data class Letter(val value: Char) : SectionKey()
 
 	val displayLabel: String
 		get() = when (this) {
+			Favorites -> "Favorites"
 			Number -> "#"
 			is Letter -> value.toString()
 		}
 
 	override fun compareTo(other: SectionKey): Int {
 		return when {
+			this is Favorites && other !is Favorites -> -1
+			this !is Favorites && other is Favorites -> 1
 			this is Number && other is Letter -> -1
 			this is Letter && other is Number -> 1
 			this is Number && other is Number -> 0
