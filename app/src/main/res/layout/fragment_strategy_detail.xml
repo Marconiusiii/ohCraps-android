@@ -30,24 +30,60 @@
 		android:accessibilityHeading="true"
 		android:layout_marginBottom="@dimen/controlSpacing" />
 
-	<com.google.android.material.switchmaterial.SwitchMaterial
-		android:id="@+id/favoriteToggle"
-		android:layout_width="wrap_content"
+	<LinearLayout
+		android:id="@+id/actionRow"
+		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:text="@string/favorite_strategy_toggle"
-		android:contentDescription="@string/favorite_strategy_toggle"
-		android:visibility="gone"
-		android:layout_marginBottom="@dimen/controlSpacing" />
+		android:orientation="horizontal"
+		android:gravity="center_vertical"
+		android:layout_marginBottom="@dimen/controlSpacing"
+		android:visibility="gone">
 
-	<com.google.android.material.button.MaterialButton
-		android:id="@+id/shareButton"
-		style="@style/Widget.Material3.Button.OutlinedButton"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="@string/share_strategy_button"
-		android:contentDescription="@string/share_strategy_button"
-		android:visibility="gone"
-		android:layout_marginBottom="@dimen/controlSpacing" />
+		<LinearLayout
+			android:id="@+id/favoriteContainer"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:orientation="horizontal"
+			android:gravity="center_vertical"
+			android:visibility="gone">
+
+			<ImageView
+				android:id="@+id/favoriteIcon"
+				android:layout_width="20dp"
+				android:layout_height="20dp"
+				android:layout_marginEnd="8dp"
+				android:importantForAccessibility="no"
+				android:contentDescription="@null"
+				android:src="@drawable/selector_favorite_star" />
+
+			<TextView
+				android:id="@+id/favoriteLabel"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginEnd="8dp"
+				android:labelFor="@id/favoriteToggle"
+				android:text="@string/favorite_strategy_toggle"
+				android:textAppearance="@style/TextAppearance.OhCraps.Body" />
+
+			<com.google.android.material.switchmaterial.SwitchMaterial
+				android:id="@+id/favoriteToggle"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text=""
+				android:showText="false" />
+		</LinearLayout>
+
+		<com.google.android.material.button.MaterialButton
+			android:id="@+id/shareButton"
+			style="@style/Widget.Material3.Button.OutlinedButton"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="@dimen/controlSpacing"
+			android:text="@string/share_strategy_button"
+			android:contentDescription="@string/share_strategy_button"
+			android:visibility="gone" />
+	</LinearLayout>
 
 	<com.google.android.material.button.MaterialButton
 		android:id="@+id/actionsButton"

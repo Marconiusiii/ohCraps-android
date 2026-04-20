@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.view.accessibility.AccessibilityEvent
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.PopupMenu
 import android.widget.TextView
@@ -29,6 +30,10 @@ import kotlinx.coroutines.withContext
 class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 
 	private lateinit var backButton: MaterialButton
+	private lateinit var actionRow: LinearLayout
+	private lateinit var favoriteContainer: LinearLayout
+	private lateinit var favoriteIcon: ImageView
+	private lateinit var favoriteLabel: TextView
 	private lateinit var shareButton: MaterialButton
 	private lateinit var actionsButton: MaterialButton
 	private lateinit var favoriteToggle: SwitchMaterial
@@ -75,6 +80,10 @@ class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 
 	private fun bindViews(rootView: View) {
 		backButton = rootView.findViewById(R.id.backButton)
+		actionRow = rootView.findViewById(R.id.actionRow)
+		favoriteContainer = rootView.findViewById(R.id.favoriteContainer)
+		favoriteIcon = rootView.findViewById(R.id.favoriteIcon)
+		favoriteLabel = rootView.findViewById(R.id.favoriteLabel)
 		shareButton = rootView.findViewById(R.id.shareButton)
 		actionsButton = rootView.findViewById(R.id.actionsButton)
 		favoriteToggle = rootView.findViewById(R.id.favoriteToggle)
@@ -118,6 +127,7 @@ class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 			if (isBindingFavoriteToggle || userStrategyForActions != null || strategyIdForFocus.isEmpty()) {
 				return@setOnCheckedChangeListener
 			}
+			favoriteIcon.isSelected = isChecked
 			FavoriteStrategyStore.setFavorite(requireContext(), strategyIdForFocus, isChecked)
 		}
 	}
@@ -178,7 +188,8 @@ class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 			notesSection.visibility = View.GONE
 			creditSection.visibility = View.GONE
 			stepsContainer.removeAllViews()
-			favoriteToggle.visibility = View.GONE
+			actionRow.visibility = View.GONE
+			favoriteContainer.visibility = View.GONE
 			shareButton.visibility = View.GONE
 			actionsButton.visibility = View.GONE
 			submissionStatusText.visibility = View.GONE
@@ -191,9 +202,9 @@ class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 
 		buyInValue.contentDescription = getString(R.string.kv_buy_in, strategy.buyInText)
 		tableMinValue.contentDescription = getString(R.string.kv_table_minimum, strategy.tableMinText)
-		bindFavoriteToggle(strategy)
 		shareButton.visibility = if (userStrategyForActions == null) View.VISIBLE else View.GONE
 		actionsButton.visibility = if (userStrategyForActions == null) View.GONE else View.VISIBLE
+		bindFavoriteToggle(strategy)
 		updateSubmissionStatusText()
 
 		if (strategy.notes.isBlank()) {
@@ -232,15 +243,17 @@ class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 
 	private fun bindFavoriteToggle(strategy: Strategy) {
 		if (userStrategyForActions != null) {
-			favoriteToggle.visibility = View.GONE
+			favoriteContainer.visibility = View.GONE
+			actionRow.visibility = if (shareButton.visibility == View.VISIBLE) View.VISIBLE else View.GONE
 			return
 		}
 
-		favoriteToggle.visibility = View.VISIBLE
-		favoriteToggle.contentDescription = getString(R.string.favorite_strategy_toggle)
+		favoriteContainer.visibility = View.VISIBLE
+		actionRow.visibility = View.VISIBLE
 		isBindingFavoriteToggle = true
 		favoriteToggle.isChecked = FavoriteStrategyStore.isFavorite(requireContext(), strategy.id)
 		isBindingFavoriteToggle = false
+		favoriteIcon.isSelected = favoriteToggle.isChecked
 	}
 
 	private fun renderSteps(contentBlocks: List<StrategyContentBlock>) {
