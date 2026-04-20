@@ -20,7 +20,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.switchmaterial.SwitchMaterial
 import com.marconius.ohcraps.R
 import com.marconius.ohcraps.strategies.Strategy
 import com.marconius.ohcraps.strategies.StrategyContentBlock
@@ -38,7 +37,6 @@ class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 	private lateinit var favoriteLabel: TextView
 	private lateinit var shareButton: MaterialButton
 	private lateinit var actionsButton: MaterialButton
-	private lateinit var favoriteToggle: SwitchMaterial
 	private lateinit var screenTitle: TextView
 	private lateinit var submissionStatusText: TextView
 	private lateinit var buyInValue: TextView
@@ -56,7 +54,7 @@ class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 	private var userStrategyForActions: UserStrategy? = null
 	private var displayedStrategy: Strategy? = null
 	private var pendingDetailSubmitStrategyId: String? = null
-	private var isBindingFavoriteToggle: Boolean = false
+	private var isFavoriteSelected: Boolean = false
 
 	private val emailLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
 		val strategyId = pendingDetailSubmitStrategyId ?: return@registerForActivityResult
@@ -88,7 +86,6 @@ class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 		favoriteLabel = rootView.findViewById(R.id.favoriteLabel)
 		shareButton = rootView.findViewById(R.id.shareButton)
 		actionsButton = rootView.findViewById(R.id.actionsButton)
-		favoriteToggle = rootView.findViewById(R.id.favoriteToggle)
 		screenTitle = rootView.findViewById(R.id.screenTitle)
 		submissionStatusText = rootView.findViewById(R.id.submissionStatusText)
 		buyInValue = rootView.findViewById(R.id.buyInValue)
@@ -129,28 +126,20 @@ class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 			if (userStrategyForActions != null || strategyIdForFocus.isEmpty()) {
 				return@setOnClickListener
 			}
-			setFavoriteChecked(!favoriteToggle.isChecked)
-		}
-		favoriteToggle.setOnCheckedChangeListener { _, isChecked ->
-			if (isBindingFavoriteToggle || userStrategyForActions != null || strategyIdForFocus.isEmpty()) {
-				return@setOnCheckedChangeListener
-			}
-			FavoriteStrategyStore.setFavorite(requireContext(), strategyIdForFocus, isChecked)
+			setFavoriteChecked(!isFavoriteSelected)
 		}
 		ViewCompat.setAccessibilityDelegate(favoriteContainer, object : AccessibilityDelegateCompat() {
 			override fun onInitializeAccessibilityNodeInfo(host: View, info: AccessibilityNodeInfoCompat) {
 				super.onInitializeAccessibilityNodeInfo(host, info)
-				info.className = "android.widget.Switch"
+				info.className = "android.widget.Button"
 				info.isCheckable = true
-				info.isChecked = favoriteToggle.isChecked
-				info.contentDescription = getString(R.string.favorite_strategy_toggle)
-				info.stateDescription = getString(
-					if (favoriteToggle.isChecked) {
-						R.string.favorite_strategy_on
-					} else {
-						R.string.favorite_strategy_off
-					}
+				info.isChecked = isFavoriteSelected
+				info.contentDescription = getString(
+					R.string.favorite_strategy_accessibility,
+					getString(R.string.favorite_strategy_toggle),
+					getFavoriteStateLabel(isFavoriteSelected)
 				)
+				info.stateDescription = getFavoriteStateLabel(isFavoriteSelected)
 			}
 		})
 		ViewCompat.replaceAccessibilityAction(
@@ -161,7 +150,7 @@ class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 			if (userStrategyForActions != null || strategyIdForFocus.isEmpty()) {
 				return@replaceAccessibilityAction false
 			}
-			setFavoriteChecked(!favoriteToggle.isChecked)
+			setFavoriteChecked(!isFavoriteSelected)
 			true
 		}
 	}
@@ -288,21 +277,28 @@ class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 	}
 
 	private fun setFavoriteChecked(isChecked: Boolean, persistChange: Boolean = true) {
-		isBindingFavoriteToggle = true
-		favoriteToggle.isChecked = isChecked
-		isBindingFavoriteToggle = false
+		isFavoriteSelected = isChecked
 		favoriteIcon.isSelected = isChecked
-		favoriteContainer.contentDescription = getString(R.string.favorite_strategy_toggle)
-		favoriteContainer.stateDescription = getString(
+		favoriteContainer.isSelected = isChecked
+		favoriteContainer.contentDescription = getString(
+			R.string.favorite_strategy_accessibility,
+			getString(R.string.favorite_strategy_toggle),
+			getFavoriteStateLabel(isChecked)
+		)
+		favoriteContainer.stateDescription = getFavoriteStateLabel(isChecked)
+		if (persistChange && userStrategyForActions == null && strategyIdForFocus.isNotEmpty()) {
+			FavoriteStrategyStore.setFavorite(requireContext(), strategyIdForFocus, isChecked)
+		}
+	}
+
+	private fun getFavoriteStateLabel(isChecked: Boolean): String {
+		return getString(
 			if (isChecked) {
 				R.string.favorite_strategy_on
 			} else {
 				R.string.favorite_strategy_off
 			}
 		)
-		if (persistChange && userStrategyForActions == null && strategyIdForFocus.isNotEmpty()) {
-			FavoriteStrategyStore.setFavorite(requireContext(), strategyIdForFocus, isChecked)
-		}
 	}
 
 	private fun renderSteps(contentBlocks: List<StrategyContentBlock>) {

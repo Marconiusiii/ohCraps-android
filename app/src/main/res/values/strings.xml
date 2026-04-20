@@ -93,6 +93,7 @@
 	<string name="favorite_strategy_on">On</string>
 	<string name="favorite_strategy_off">Off</string>
 	<string name="favorite_strategy_action_toggle">toggle</string>
+	<string name="favorite_strategy_accessibility">%1$s, %2$s</string>
 	<string name="favorites_heading">Favorites</string>
 
 	<string name="search_hint">Search strategies</string>

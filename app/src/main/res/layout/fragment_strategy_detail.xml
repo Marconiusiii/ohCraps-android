@@ -64,20 +64,9 @@
 				android:id="@+id/favoriteLabel"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_marginEnd="8dp"
 				android:importantForAccessibility="no"
 				android:text="@string/favorite_strategy_toggle"
 				android:textAppearance="@style/TextAppearance.OhCraps.Body" />
-
-			<com.google.android.material.switchmaterial.SwitchMaterial
-				android:id="@+id/favoriteToggle"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:clickable="false"
-				android:focusable="false"
-				android:importantForAccessibility="no"
-				android:text=""
-				android:showText="false" />
 		</LinearLayout>
 
 		<com.google.android.material.button.MaterialButton
