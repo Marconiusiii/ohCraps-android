@@ -90,6 +90,9 @@
 	<string name="share_strategy_file_label">Strategy text file</string>
 	<string name="share_strategy_no_app">No app is available to share this strategy.</string>
 	<string name="favorite_strategy_toggle">Favorite Strategy</string>
+	<string name="favorite_strategy_on">On</string>
+	<string name="favorite_strategy_off">Off</string>
+	<string name="favorite_strategy_action_toggle">toggle</string>
 	<string name="favorites_heading">Favorites</string>
 
 	<string name="search_hint">Search strategies</string>

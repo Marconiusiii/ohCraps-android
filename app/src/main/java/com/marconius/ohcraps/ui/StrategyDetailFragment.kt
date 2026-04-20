@@ -13,7 +13,9 @@ import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.core.view.AccessibilityDelegateCompat
 import androidx.core.view.ViewCompat
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -123,12 +125,44 @@ class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 		shareButton.setOnClickListener {
 			shareCurrentStrategy()
 		}
+		favoriteContainer.setOnClickListener {
+			if (userStrategyForActions != null || strategyIdForFocus.isEmpty()) {
+				return@setOnClickListener
+			}
+			setFavoriteChecked(!favoriteToggle.isChecked)
+		}
 		favoriteToggle.setOnCheckedChangeListener { _, isChecked ->
 			if (isBindingFavoriteToggle || userStrategyForActions != null || strategyIdForFocus.isEmpty()) {
 				return@setOnCheckedChangeListener
 			}
-			favoriteIcon.isSelected = isChecked
 			FavoriteStrategyStore.setFavorite(requireContext(), strategyIdForFocus, isChecked)
+		}
+		ViewCompat.setAccessibilityDelegate(favoriteContainer, object : AccessibilityDelegateCompat() {
+			override fun onInitializeAccessibilityNodeInfo(host: View, info: AccessibilityNodeInfoCompat) {
+				super.onInitializeAccessibilityNodeInfo(host, info)
+				info.className = "android.widget.Switch"
+				info.isCheckable = true
+				info.isChecked = favoriteToggle.isChecked
+				info.contentDescription = getString(R.string.favorite_strategy_toggle)
+				info.stateDescription = getString(
+					if (favoriteToggle.isChecked) {
+						R.string.favorite_strategy_on
+					} else {
+						R.string.favorite_strategy_off
+					}
+				)
+			}
+		})
+		ViewCompat.replaceAccessibilityAction(
+			favoriteContainer,
+			AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_CLICK,
+			getString(R.string.favorite_strategy_action_toggle)
+		) { _, _ ->
+			if (userStrategyForActions != null || strategyIdForFocus.isEmpty()) {
+				return@replaceAccessibilityAction false
+			}
+			setFavoriteChecked(!favoriteToggle.isChecked)
+			true
 		}
 	}
 
@@ -250,10 +284,25 @@ class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 
 		favoriteContainer.visibility = View.VISIBLE
 		actionRow.visibility = View.VISIBLE
+		setFavoriteChecked(FavoriteStrategyStore.isFavorite(requireContext(), strategy.id), persistChange = false)
+	}
+
+	private fun setFavoriteChecked(isChecked: Boolean, persistChange: Boolean = true) {
 		isBindingFavoriteToggle = true
-		favoriteToggle.isChecked = FavoriteStrategyStore.isFavorite(requireContext(), strategy.id)
+		favoriteToggle.isChecked = isChecked
 		isBindingFavoriteToggle = false
-		favoriteIcon.isSelected = favoriteToggle.isChecked
+		favoriteIcon.isSelected = isChecked
+		favoriteContainer.contentDescription = getString(R.string.favorite_strategy_toggle)
+		favoriteContainer.stateDescription = getString(
+			if (isChecked) {
+				R.string.favorite_strategy_on
+			} else {
+				R.string.favorite_strategy_off
+			}
+		)
+		if (persistChange && userStrategyForActions == null && strategyIdForFocus.isNotEmpty()) {
+			FavoriteStrategyStore.setFavorite(requireContext(), strategyIdForFocus, isChecked)
+		}
 	}
 
 	private fun renderSteps(contentBlocks: List<StrategyContentBlock>) {
