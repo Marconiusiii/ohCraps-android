@@ -18,52 +18,19 @@
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintEnd_toEndOf="parent" />
 
-	<LinearLayout
+	<com.google.android.material.bottomnavigation.BottomNavigationView
 		android:id="@+id/bottomNav"
 		android:layout_width="0dp"
 		android:layout_height="wrap_content"
-		android:orientation="horizontal"
 		android:background="@drawable/bg_bottom_nav_rail"
-		android:paddingStart="@dimen/bottomNavRailPadding"
-		android:paddingTop="@dimen/bottomNavRailPadding"
-		android:paddingEnd="@dimen/bottomNavRailPadding"
-		android:paddingBottom="@dimen/bottomNavRailPadding"
+		app:itemBackground="@drawable/bg_bottom_nav_item"
+		app:itemHorizontalTranslationEnabled="false"
+		app:itemRippleColor="@android:color/transparent"
+		app:itemTextColor="@color/selector_bottom_nav_text"
+		app:labelVisibilityMode="labeled"
+		app:menu="@menu/bottom_nav_menu"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintEnd_toEndOf="parent">
-
-		<androidx.appcompat.widget.AppCompatButton
-			android:id="@+id/navStrategiesButton"
-			style="@style/Widget.OhCraps.BottomRailButton"
-			android:layout_width="0dp"
-			android:layout_height="wrap_content"
-			android:layout_weight="1"
-			android:text="@string/tab_strategies" />
-
-		<androidx.appcompat.widget.AppCompatButton
-			android:id="@+id/navRulesButton"
-			style="@style/Widget.OhCraps.BottomRailButton"
-			android:layout_width="0dp"
-			android:layout_height="wrap_content"
-			android:layout_weight="1"
-			android:text="@string/tab_rules" />
-
-		<androidx.appcompat.widget.AppCompatButton
-			android:id="@+id/navCreateStrategyButton"
-			style="@style/Widget.OhCraps.BottomRailButton"
-			android:layout_width="0dp"
-			android:layout_height="wrap_content"
-			android:layout_weight="1"
-			android:text="@string/tab_create_strategy" />
-
-		<androidx.appcompat.widget.AppCompatButton
-			android:id="@+id/navAboutButton"
-			style="@style/Widget.OhCraps.BottomRailButton"
-			android:layout_width="0dp"
-			android:layout_height="wrap_content"
-			android:layout_weight="1"
-			android:text="@string/tab_about" />
-
-	</LinearLayout>
+		app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

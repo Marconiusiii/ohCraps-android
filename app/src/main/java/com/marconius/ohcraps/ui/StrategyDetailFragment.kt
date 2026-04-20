@@ -237,6 +237,7 @@ class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 		}
 
 		favoriteToggle.visibility = View.VISIBLE
+		favoriteToggle.contentDescription = getString(R.string.favorite_strategy_toggle)
 		isBindingFavoriteToggle = true
 		favoriteToggle.isChecked = FavoriteStrategyStore.isFavorite(requireContext(), strategy.id)
 		isBindingFavoriteToggle = false

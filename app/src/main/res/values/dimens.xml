@@ -8,4 +8,5 @@
 	<dimen name="bottomNavRailPadding">8dp</dimen>
 	<dimen name="bottomNavButtonMinHeight">60dp</dimen>
 	<dimen name="bottomNavButtonTextSize">12sp</dimen>
+	<dimen name="bottomNavTextAppearanceSize">11sp</dimen>
 </resources>

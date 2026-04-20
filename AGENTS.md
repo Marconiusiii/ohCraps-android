@@ -25,6 +25,7 @@
 - If scope is ambiguous, ask a clarifying question and do not edit anything.
 - Never regress accessible design or working features.
 - Never prioritize sight-centric workflows over accessible and usable layouts and elements.
+- Always use Native first design patterns, components, and controls. Never make custom implementations or controls without explicit consent and without having researched native patterns and design documentation first.
 
 ## When Asked for Review
 - Prioritize findings first: bugs, risks, regressions, missing tests.
