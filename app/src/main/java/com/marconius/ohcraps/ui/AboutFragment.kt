@@ -7,6 +7,7 @@ import android.text.SpannableString
 import android.text.Spanned
 import android.text.method.LinkMovementMethod
 import android.text.style.URLSpan
+import android.view.ContextThemeWrapper
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
@@ -118,7 +119,11 @@ class AboutFragment : Fragment(R.layout.fragment_about) {
 	}
 
 	private fun createFeedbackButton(): MaterialButton {
-		return MaterialButton(requireContext(), null, com.google.android.material.R.attr.materialButtonOutlinedStyle).apply {
+		return MaterialButton(
+			ContextThemeWrapper(requireContext(), R.style.Widget_OhCraps_FeltActionButton),
+			null,
+			0
+		).apply {
 			layoutParams = LinearLayout.LayoutParams(
 				ViewGroup.LayoutParams.WRAP_CONTENT,
 				ViewGroup.LayoutParams.WRAP_CONTENT
@@ -134,7 +139,11 @@ class AboutFragment : Fragment(R.layout.fragment_about) {
 	}
 
 	private fun createWhatsNewButton(): MaterialButton {
-		return MaterialButton(requireContext(), null, com.google.android.material.R.attr.materialButtonOutlinedStyle).apply {
+		return MaterialButton(
+			ContextThemeWrapper(requireContext(), R.style.Widget_OhCraps_FeltActionButton),
+			null,
+			0
+		).apply {
 			layoutParams = LinearLayout.LayoutParams(
 				ViewGroup.LayoutParams.WRAP_CONTENT,
 				ViewGroup.LayoutParams.WRAP_CONTENT

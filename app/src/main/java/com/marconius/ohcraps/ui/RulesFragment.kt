@@ -3,6 +3,7 @@ package com.marconius.ohcraps.ui
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.view.ContextThemeWrapper
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -43,7 +44,11 @@ class RulesFragment : Fragment(R.layout.fragment_rules) {
 			orientation = LinearLayout.VERTICAL
 		}
 
-		val toggleButton = MaterialButton(requireContext(), null, com.google.android.material.R.attr.materialButtonOutlinedStyle).apply {
+		val toggleButton = MaterialButton(
+			ContextThemeWrapper(requireContext(), R.style.Widget_OhCraps_FeltActionButton),
+			null,
+			0
+		).apply {
 			layoutParams = LinearLayout.LayoutParams(
 				ViewGroup.LayoutParams.MATCH_PARENT,
 				ViewGroup.LayoutParams.WRAP_CONTENT
