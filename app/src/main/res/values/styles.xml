@@ -63,4 +63,19 @@
 		<item name="android:insetBottom">0dp</item>
 	</style>
 
+	<style name="Widget.OhCraps.SearchField" parent="Widget.Material3.TextInputLayout.FilledBox">
+		<item name="boxBackgroundMode">filled</item>
+		<item name="boxBackgroundColor">@color/searchFieldFill</item>
+		<item name="boxStrokeColor">@color/searchFieldStroke</item>
+		<item name="hintTextColor">@color/text_secondary</item>
+		<item name="android:textColorHint">@color/text_secondary</item>
+		<item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.OhCraps.SearchField</item>
+		<item name="endIconTint">@color/accent_gold</item>
+	</style>
+
+	<style name="ShapeAppearanceOverlay.OhCraps.SearchField" parent="">
+		<item name="cornerFamily">rounded</item>
+		<item name="cornerSize">14dp</item>
+	</style>
+
 </resources>

@@ -12,4 +12,5 @@
 	<dimen name="detailActionMinHeight">48dp</dimen>
 	<dimen name="detailActionPaddingHorizontal">14dp</dimen>
 	<dimen name="detailActionPaddingVertical">10dp</dimen>
+	<dimen name="strategyRowMinHeight">48dp</dimen>
 </resources>

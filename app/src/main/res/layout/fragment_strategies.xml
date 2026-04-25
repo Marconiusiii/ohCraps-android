@@ -19,12 +19,10 @@
 
 	<com.google.android.material.textfield.TextInputLayout
 		android:id="@+id/searchInputLayout"
+		style="@style/Widget.OhCraps.SearchField"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:hint="@string/search_hint"
-		app:boxBackgroundMode="filled"
-		app:boxBackgroundColor="@color/surface_light"
-		app:hintTextColor="@color/text_secondary"
 		app:endIconMode="clear_text"
 		app:endIconContentDescription="@string/search_clear_button"
 		android:layout_marginBottom="@dimen/controlSpacing">
@@ -49,18 +47,18 @@
 
 		<com.google.android.material.button.MaterialButton
 			android:id="@+id/tableFilterButton"
-			style="@style/Widget.Material3.Button.OutlinedButton"
+			style="@style/Widget.OhCraps.FeltActionButton"
 			android:layout_width="0dp"
-			android:layout_height="wrap_content"
+			android:layout_height="@dimen/detailActionMinHeight"
 			android:layout_weight="1"
 			android:text="@string/filter_table_default"
 			android:layout_marginEnd="@dimen/controlSpacing" />
 
 		<com.google.android.material.button.MaterialButton
 			android:id="@+id/buyInFilterButton"
-			style="@style/Widget.Material3.Button.OutlinedButton"
+			style="@style/Widget.OhCraps.FeltActionButton"
 			android:layout_width="0dp"
-			android:layout_height="wrap_content"
+			android:layout_height="@dimen/detailActionMinHeight"
 			android:layout_weight="1"
 			android:text="@string/filter_buy_in_default" />
 	</LinearLayout>

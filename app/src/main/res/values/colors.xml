@@ -32,6 +32,12 @@
 	<color name="detailFavoriteFocusFill">#4A3F17</color>
 	<color name="detailFavoritePressedFill">#56491B</color>
 	<color name="detailFavoriteTextSelected">#F2CF6A</color>
+	<color name="searchFieldFill">#14372C</color>
+	<color name="searchFieldStroke">#B38C45</color>
+	<color name="strategyRowFill">#12372B</color>
+	<color name="strategyRowFocusFill">#184536</color>
+	<color name="strategyRowPressedFill">#1D5140</color>
+	<color name="strategyRowStroke">#B18A46</color>
 
 	<!-- Surface / background helpers -->
 	<color name="surface_dark">#121212</color>
