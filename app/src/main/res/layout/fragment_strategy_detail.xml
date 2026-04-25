@@ -44,6 +44,12 @@
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
 			android:layout_weight="1"
+			android:minHeight="@dimen/detailActionMinHeight"
+			android:paddingStart="@dimen/detailActionPaddingHorizontal"
+			android:paddingTop="@dimen/detailActionPaddingVertical"
+			android:paddingEnd="@dimen/detailActionPaddingHorizontal"
+			android:paddingBottom="@dimen/detailActionPaddingVertical"
+			android:background="@drawable/bg_detail_favorite_action"
 			android:orientation="horizontal"
 			android:gravity="center_vertical"
 			android:clickable="true"
@@ -66,14 +72,14 @@
 				android:layout_height="wrap_content"
 				android:importantForAccessibility="no"
 				android:text="@string/favorite_strategy_toggle"
-				android:textAppearance="@style/TextAppearance.OhCraps.Body" />
+				android:textAppearance="@style/TextAppearance.OhCraps.DetailActionText" />
 		</LinearLayout>
 
 		<com.google.android.material.button.MaterialButton
 			android:id="@+id/shareButton"
-			style="@style/Widget.Material3.Button.OutlinedButton"
+			style="@style/Widget.OhCraps.DetailActionButton"
 			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
+			android:layout_height="@dimen/detailActionMinHeight"
 			android:layout_marginStart="@dimen/controlSpacing"
 			android:text="@string/share_strategy_button"
 			android:contentDescription="@string/share_strategy_button"

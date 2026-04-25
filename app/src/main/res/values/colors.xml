@@ -24,6 +24,14 @@
 	<color name="chipPocketSelectedLight">#7A4C2A</color>
 	<color name="chipPocketSelectedDark">#3A2414</color>
 	<color name="chipPocketStroke">#8A613F</color>
+	<color name="detailActionBaseFill">#123A2E</color>
+	<color name="detailActionFocusFill">#1A4B3B</color>
+	<color name="detailActionPressedFill">#1E5744</color>
+	<color name="detailActionStroke">#C8A35A</color>
+	<color name="detailFavoriteSelectedFill">#3E3514</color>
+	<color name="detailFavoriteFocusFill">#4A3F17</color>
+	<color name="detailFavoritePressedFill">#56491B</color>
+	<color name="detailFavoriteTextSelected">#F2CF6A</color>
 
 	<!-- Surface / background helpers -->
 	<color name="surface_dark">#121212</color>

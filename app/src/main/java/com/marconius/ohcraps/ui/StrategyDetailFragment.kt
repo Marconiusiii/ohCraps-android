@@ -276,6 +276,17 @@ class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 	private fun setFavoriteChecked(isChecked: Boolean, persistChange: Boolean = true) {
 		isFavoriteSelected = isChecked
 		favoriteIcon.isSelected = isChecked
+		favoriteContainer.isSelected = isChecked
+		favoriteLabel.setTextColor(
+			ContextCompat.getColor(
+				requireContext(),
+				if (isChecked) {
+					R.color.detailFavoriteTextSelected
+				} else {
+					R.color.text_primary
+				}
+			)
+		)
 		favoriteContainer.contentDescription = getString(
 			R.string.favorite_strategy_accessibility,
 			getString(R.string.favorite_strategy_toggle),
