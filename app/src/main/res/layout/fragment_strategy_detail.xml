@@ -86,15 +86,15 @@
 			android:visibility="gone" />
 	</LinearLayout>
 
-	<com.google.android.material.button.MaterialButton
-		android:id="@+id/actionsButton"
-		style="@style/Widget.Material3.Button.OutlinedButton"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="@string/user_strategy_actions_button"
-		android:contentDescription="@string/user_strategy_actions_button"
-		android:visibility="gone"
-		android:layout_marginBottom="@dimen/controlSpacing" />
+		<com.google.android.material.button.MaterialButton
+			android:id="@+id/actionsButton"
+			style="@style/Widget.OhCraps.DetailActionButton"
+			android:layout_width="wrap_content"
+			android:layout_height="@dimen/detailActionMinHeight"
+			android:text="@string/user_strategy_actions_button"
+			android:contentDescription="@string/user_strategy_actions_button"
+			android:visibility="gone"
+			android:layout_marginBottom="@dimen/controlSpacing" />
 
 	<TextView
 		android:id="@+id/submissionStatusText"
