@@ -2,6 +2,9 @@ package com.marconius.ohcraps
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
@@ -27,6 +30,7 @@ class MainActivity : AppCompatActivity() {
 		bottomNav.itemTextAppearanceActive = R.style.TextAppearance_OhCraps_BottomNav
 		bottomNav.itemTextAppearanceInactive = R.style.TextAppearance_OhCraps_BottomNav
 		bottomNav.setupWithNavController(navController)
+		applyWindowInsets()
 
 		navController.addOnDestinationChangedListener { _, destination, _ ->
 			val isTopLevel = destination.id == R.id.strategiesFragment ||
@@ -41,6 +45,36 @@ class MainActivity : AppCompatActivity() {
 				showWhatsNewIfNeeded()
 			}
 		}
+	}
+
+	private fun applyWindowInsets() {
+		val rootView = findViewById<View>(R.id.main)
+		val navHostView = findViewById<View>(R.id.navHostFragment)
+		val rootStart = rootView.paddingStart
+		val rootEnd = rootView.paddingEnd
+		val rootBottom = rootView.paddingBottom
+		val navStart = navHostView.paddingStart
+		val navTop = navHostView.paddingTop
+		val navEnd = navHostView.paddingEnd
+		val navBottom = navHostView.paddingBottom
+
+		ViewCompat.setOnApplyWindowInsetsListener(rootView) { _, windowInsets ->
+			val systemBars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+			rootView.updatePadding(
+				left = rootStart + systemBars.left,
+				top = 0,
+				right = rootEnd + systemBars.right,
+				bottom = rootBottom + systemBars.bottom
+			)
+			navHostView.updatePadding(
+				left = navStart,
+				top = navTop + systemBars.top,
+				right = navEnd,
+				bottom = navBottom
+			)
+			windowInsets
+		}
+		ViewCompat.requestApplyInsets(rootView)
 	}
 
 	fun setBottomNavForcedHidden(hidden: Boolean) {

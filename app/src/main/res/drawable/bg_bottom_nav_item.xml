@@ -10,11 +10,11 @@
 				<corners android:radius="18dp" />
 				<gradient
 					android:angle="270"
-					android:startColor="@color/chipPocketSelectedLight"
-					android:endColor="@color/chipPocketSelectedDark" />
+					android:startColor="@color/bottomNavSelectedPocketLight"
+					android:endColor="@color/bottomNavSelectedPocketDark" />
 				<stroke
 					android:width="2dp"
-					android:color="@color/accent_gold" />
+					android:color="@color/bottomNavSelectedStroke" />
 			</shape>
 		</inset>
 	</item>
