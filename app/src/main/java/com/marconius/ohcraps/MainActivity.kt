@@ -26,6 +26,7 @@ class MainActivity : AppCompatActivity() {
 		val navController = navHost.navController
 
 		bottomNav = findViewById(R.id.bottomNav)
+		bottomNav.setItemActiveIndicatorEnabled(false)
 		bottomNav.itemIconTintList = null
 		bottomNav.itemTextAppearanceActive = R.style.TextAppearance_OhCraps_BottomNav
 		bottomNav.itemTextAppearanceInactive = R.style.TextAppearance_OhCraps_BottomNav

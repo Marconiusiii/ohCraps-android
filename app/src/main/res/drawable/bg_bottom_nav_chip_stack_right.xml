@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 	<item
-		android:width="7dp"
-		android:height="16dp"
+		android:width="3dp"
+		android:height="22dp"
 		android:gravity="start|center_vertical">
 		<shape android:shape="rectangle">
-			<corners android:radius="3dp" />
 			<gradient
 				android:angle="90"
 				android:startColor="@color/bottomNavChipGreenDark"
@@ -14,12 +13,11 @@
 		</shape>
 	</item>
 	<item
-		android:left="7dp"
-		android:width="7dp"
-		android:height="16dp"
+		android:left="5dp"
+		android:width="3dp"
+		android:height="22dp"
 		android:gravity="start|center_vertical">
 		<shape android:shape="rectangle">
-			<corners android:radius="3dp" />
 			<gradient
 				android:angle="90"
 				android:startColor="@color/bottomNavChipGreenDark"
@@ -28,26 +26,11 @@
 		</shape>
 	</item>
 	<item
-		android:left="14dp"
-		android:width="7dp"
-		android:height="16dp"
+		android:left="10dp"
+		android:width="3dp"
+		android:height="22dp"
 		android:gravity="start|center_vertical">
 		<shape android:shape="rectangle">
-			<corners android:radius="3dp" />
-			<gradient
-				android:angle="90"
-				android:startColor="@color/bottomNavChipGreenDark"
-				android:centerColor="@color/bottomNavChipGreenLight"
-				android:endColor="@color/bottomNavChipGreenDark" />
-		</shape>
-	</item>
-	<item
-		android:left="21dp"
-		android:width="7dp"
-		android:height="16dp"
-		android:gravity="start|center_vertical">
-		<shape android:shape="rectangle">
-			<corners android:radius="3dp" />
 			<gradient
 				android:angle="90"
 				android:startColor="@color/bottomNavChipWhiteDark"

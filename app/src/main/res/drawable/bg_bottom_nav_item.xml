@@ -12,23 +12,23 @@
 						<corners android:radius="18dp" />
 						<gradient
 							android:angle="270"
-							android:startColor="@color/bottomNavSelectedPocketLight"
-							android:endColor="@color/bottomNavSelectedPocketDark" />
+							android:startColor="@color/chipPocketLight"
+							android:endColor="@color/chipPocketDark" />
 						<stroke
 							android:width="2dp"
 							android:color="@color/bottomNavSelectedStroke" />
 					</shape>
 				</item>
 				<item
-					android:width="28dp"
-					android:height="16dp"
-					android:start="10dp"
+					android:width="8dp"
+					android:height="22dp"
+					android:start="12dp"
 					android:gravity="start|center_vertical"
 					android:drawable="@drawable/bg_bottom_nav_chip_stack_left" />
 				<item
-					android:width="28dp"
-					android:height="16dp"
-					android:end="10dp"
+					android:width="13dp"
+					android:height="22dp"
+					android:end="12dp"
 					android:gravity="end|center_vertical"
 					android:drawable="@drawable/bg_bottom_nav_chip_stack_right" />
 			</layer-list>
