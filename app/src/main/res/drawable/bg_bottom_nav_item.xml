@@ -23,12 +23,14 @@
 					android:width="8dp"
 					android:height="22dp"
 					android:start="12dp"
+					android:top="-2dp"
 					android:gravity="start|center_vertical"
 					android:drawable="@drawable/bg_bottom_nav_chip_stack_left" />
 				<item
-					android:width="13dp"
+					android:width="8dp"
 					android:height="22dp"
 					android:end="12dp"
+					android:top="-2dp"
 					android:gravity="end|center_vertical"
 					android:drawable="@drawable/bg_bottom_nav_chip_stack_right" />
 			</layer-list>

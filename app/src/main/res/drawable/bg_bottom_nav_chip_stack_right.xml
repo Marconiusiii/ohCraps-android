@@ -26,10 +26,10 @@
 		</shape>
 	</item>
 	<item
-		android:left="10dp"
+		android:left="5dp"
 		android:width="3dp"
 		android:height="22dp"
-		android:gravity="start|center_vertical">
+		android:gravity="end|center_vertical">
 		<shape android:shape="rectangle">
 			<gradient
 				android:angle="90"
