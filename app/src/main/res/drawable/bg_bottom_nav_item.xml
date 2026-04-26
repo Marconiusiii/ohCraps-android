@@ -6,16 +6,32 @@
 			android:insetTop="4dp"
 			android:insetRight="4dp"
 			android:insetBottom="4dp">
-			<shape android:shape="rectangle">
-				<corners android:radius="18dp" />
-				<gradient
-					android:angle="270"
-					android:startColor="@color/bottomNavSelectedPocketLight"
-					android:endColor="@color/bottomNavSelectedPocketDark" />
-				<stroke
-					android:width="2dp"
-					android:color="@color/bottomNavSelectedStroke" />
-			</shape>
+			<layer-list>
+				<item>
+					<shape android:shape="rectangle">
+						<corners android:radius="18dp" />
+						<gradient
+							android:angle="270"
+							android:startColor="@color/bottomNavSelectedPocketLight"
+							android:endColor="@color/bottomNavSelectedPocketDark" />
+						<stroke
+							android:width="2dp"
+							android:color="@color/bottomNavSelectedStroke" />
+					</shape>
+				</item>
+				<item
+					android:width="28dp"
+					android:height="16dp"
+					android:start="10dp"
+					android:gravity="start|center_vertical"
+					android:drawable="@drawable/bg_bottom_nav_chip_stack_left" />
+				<item
+					android:width="28dp"
+					android:height="16dp"
+					android:end="10dp"
+					android:gravity="end|center_vertical"
+					android:drawable="@drawable/bg_bottom_nav_chip_stack_right" />
+			</layer-list>
 		</inset>
 	</item>
 	<item>
