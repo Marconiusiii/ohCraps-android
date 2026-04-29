@@ -44,6 +44,17 @@
 	<color name="detailFavoriteTextSelected">#F2CF6A</color>
 	<color name="searchFieldFill">#14372C</color>
 	<color name="searchFieldStroke">#B38C45</color>
+	<color name="formFieldFill">#102E24</color>
+	<color name="formFieldStroke">#CDB26A</color>
+	<color name="contentZoneFill">#0F3127</color>
+	<color name="contentZoneStroke">#E8E0C5</color>
+	<color name="contentZoneInnerStroke">#2E2013</color>
+	<color name="modeButtonFill">#102F25</color>
+	<color name="modeButtonStroke">#ECE3C8</color>
+	<color name="modeButtonSelectedFill">#23190F</color>
+	<color name="modeButtonSelectedStroke">#D8B562</color>
+	<color name="modeButtonSelectedText">#FFF2C5</color>
+	<color name="modeButtonPressedFill">#194233</color>
 	<color name="strategyRowFill">#12372B</color>
 	<color name="strategyRowFocusFill">#184536</color>
 	<color name="strategyRowPressedFill">#1D5140</color>

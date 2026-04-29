@@ -28,18 +28,18 @@
 
 		<com.google.android.material.button.MaterialButton
 			android:id="@+id/createModeButton"
-			style="@style/Widget.Material3.Button.OutlinedButton"
+			style="@style/Widget.OhCraps.ModeButton"
 			android:layout_width="0dp"
-			android:layout_height="wrap_content"
+			android:layout_height="@dimen/detailActionMinHeight"
 			android:layout_weight="1"
 			android:text="@string/create_mode_label"
 			android:layout_marginEnd="@dimen/controlSpacing" />
 
 		<com.google.android.material.button.MaterialButton
 			android:id="@+id/myStrategiesModeButton"
-			style="@style/Widget.Material3.Button.OutlinedButton"
+			style="@style/Widget.OhCraps.ModeButton"
 			android:layout_width="0dp"
-			android:layout_height="wrap_content"
+			android:layout_height="@dimen/detailActionMinHeight"
 			android:layout_weight="1"
 			android:text="@string/my_strategies_mode_label" />
 	</LinearLayout>
@@ -60,200 +60,223 @@
 				android:orientation="vertical"
 				android:paddingBottom="@dimen/screenPadding">
 
-				<TextView
-					android:id="@+id/requiredHint"
+				<LinearLayout
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
-					android:text="@string/create_required_hint"
-					android:textAppearance="@style/TextAppearance.OhCraps.ListItem"
-					android:layout_marginBottom="@dimen/controlSpacing" />
+					android:orientation="vertical"
+					android:background="@drawable/bg_content_zone"
+					android:padding="@dimen/contentZonePadding"
+					android:layout_marginBottom="@dimen/zoneSpacing">
 
-				<TextView
-					android:id="@+id/nameLabel"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:text="@string/create_name_label"
-					android:labelFor="@id/nameInput"
-					android:importantForAccessibility="no"
-					android:textAppearance="@style/TextAppearance.OhCraps.SectionHeading"
-					android:layout_marginBottom="4dp" />
-
-				<com.google.android.material.textfield.TextInputLayout
-					android:id="@+id/nameInputLayout"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:hint="@string/create_name_label"
-					android:importantForAccessibility="no"
-					android:layout_marginBottom="@dimen/controlSpacing">
-
-					<com.google.android.material.textfield.TextInputEditText
-						android:id="@+id/nameInput"
+					<TextView
+						android:id="@+id/requiredHint"
 						android:layout_width="match_parent"
 						android:layout_height="wrap_content"
-						android:contentDescription="@string/create_name_label"
-						android:inputType="textCapSentences"
-						android:imeOptions="actionNext" />
-				</com.google.android.material.textfield.TextInputLayout>
+						android:text="@string/create_required_hint"
+						android:textAppearance="@style/TextAppearance.OhCraps.ListItem"
+						android:layout_marginBottom="@dimen/controlSpacing" />
 
-				<TextView
-					android:id="@+id/buyInLabel"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:text="@string/create_buy_in_label"
-					android:labelFor="@id/buyInInput"
-					android:importantForAccessibility="no"
-					android:textAppearance="@style/TextAppearance.OhCraps.SectionHeading"
-					android:layout_marginBottom="4dp" />
-
-				<com.google.android.material.textfield.TextInputLayout
-					android:id="@+id/buyInInputLayout"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:hint="@string/create_buy_in_label"
-					android:importantForAccessibility="no"
-					android:layout_marginBottom="@dimen/controlSpacing">
-
-					<com.google.android.material.textfield.TextInputEditText
-						android:id="@+id/buyInInput"
+					<TextView
+						android:id="@+id/nameLabel"
 						android:layout_width="match_parent"
 						android:layout_height="wrap_content"
-						android:contentDescription="@string/create_buy_in_label"
-						android:inputType="text"
-						android:imeOptions="actionNext" />
-				</com.google.android.material.textfield.TextInputLayout>
+						android:text="@string/create_name_label"
+						android:labelFor="@id/nameInput"
+						android:importantForAccessibility="no"
+						android:textAppearance="@style/TextAppearance.OhCraps.SectionHeading"
+						android:layout_marginBottom="4dp" />
 
-				<TextView
-					android:id="@+id/tableMinimumLabel"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:text="@string/create_table_minimum_label"
-					android:labelFor="@id/tableMinimumInput"
-					android:importantForAccessibility="no"
-					android:textAppearance="@style/TextAppearance.OhCraps.SectionHeading"
-					android:layout_marginBottom="4dp" />
-
-				<com.google.android.material.textfield.TextInputLayout
-					android:id="@+id/tableMinimumInputLayout"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:hint="@string/create_table_minimum_label"
-					android:importantForAccessibility="no"
-					android:layout_marginBottom="@dimen/controlSpacing">
-
-					<com.google.android.material.textfield.TextInputEditText
-						android:id="@+id/tableMinimumInput"
+					<com.google.android.material.textfield.TextInputLayout
+						android:id="@+id/nameInputLayout"
+						style="@style/Widget.OhCraps.FormField"
 						android:layout_width="match_parent"
 						android:layout_height="wrap_content"
-						android:contentDescription="@string/create_table_minimum_label"
-						android:inputType="text"
-						android:imeOptions="actionNext" />
-				</com.google.android.material.textfield.TextInputLayout>
+						android:hint="@string/create_name_label"
+						android:importantForAccessibility="no"
+						android:layout_marginBottom="@dimen/controlSpacing">
 
-				<TextView
-					android:id="@+id/stepsLabel"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:text="@string/create_steps_label"
-					android:labelFor="@id/stepsInput"
-					android:importantForAccessibility="no"
-					android:textAppearance="@style/TextAppearance.OhCraps.SectionHeading"
-					android:layout_marginBottom="4dp" />
+						<com.google.android.material.textfield.TextInputEditText
+							android:id="@+id/nameInput"
+							android:layout_width="match_parent"
+							android:layout_height="wrap_content"
+							android:contentDescription="@string/create_name_label"
+							android:inputType="textCapSentences"
+							android:imeOptions="actionNext" />
+					</com.google.android.material.textfield.TextInputLayout>
 
-				<com.google.android.material.textfield.TextInputLayout
-					android:id="@+id/stepsInputLayout"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:hint="@string/create_steps_label"
-					android:importantForAccessibility="no"
-					android:layout_marginBottom="@dimen/controlSpacing">
-
-					<com.google.android.material.textfield.TextInputEditText
-						android:id="@+id/stepsInput"
+					<TextView
+						android:id="@+id/buyInLabel"
 						android:layout_width="match_parent"
 						android:layout_height="wrap_content"
-						android:contentDescription="@string/create_steps_label"
-						android:minLines="4"
-						android:gravity="top|start"
-						android:inputType="textMultiLine|textCapSentences"
-						android:imeOptions="actionNext" />
-				</com.google.android.material.textfield.TextInputLayout>
+						android:text="@string/create_buy_in_label"
+						android:labelFor="@id/buyInInput"
+						android:importantForAccessibility="no"
+						android:textAppearance="@style/TextAppearance.OhCraps.SectionHeading"
+						android:layout_marginBottom="4dp" />
 
-				<TextView
-					android:id="@+id/notesLabel"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:text="@string/create_notes_label"
-					android:labelFor="@id/notesInput"
-					android:importantForAccessibility="no"
-					android:textAppearance="@style/TextAppearance.OhCraps.SectionHeading"
-					android:layout_marginBottom="4dp" />
-
-				<com.google.android.material.textfield.TextInputLayout
-					android:id="@+id/notesInputLayout"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:hint="@string/create_notes_label"
-					android:importantForAccessibility="no"
-					android:layout_marginBottom="@dimen/controlSpacing">
-
-					<com.google.android.material.textfield.TextInputEditText
-						android:id="@+id/notesInput"
+					<com.google.android.material.textfield.TextInputLayout
+						android:id="@+id/buyInInputLayout"
+						style="@style/Widget.OhCraps.FormField"
 						android:layout_width="match_parent"
 						android:layout_height="wrap_content"
-						android:contentDescription="@string/create_notes_label"
-						android:minLines="3"
-						android:gravity="top|start"
-						android:inputType="textMultiLine|textCapSentences"
-						android:imeOptions="actionNext" />
-				</com.google.android.material.textfield.TextInputLayout>
+						android:hint="@string/create_buy_in_label"
+						android:importantForAccessibility="no"
+						android:layout_marginBottom="@dimen/controlSpacing">
 
-				<TextView
-					android:id="@+id/creditLabel"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:text="@string/create_credit_label"
-					android:labelFor="@id/creditInput"
-					android:importantForAccessibility="no"
-					android:textAppearance="@style/TextAppearance.OhCraps.SectionHeading"
-					android:layout_marginBottom="4dp" />
+						<com.google.android.material.textfield.TextInputEditText
+							android:id="@+id/buyInInput"
+							android:layout_width="match_parent"
+							android:layout_height="wrap_content"
+							android:contentDescription="@string/create_buy_in_label"
+							android:inputType="text"
+							android:imeOptions="actionNext" />
+					</com.google.android.material.textfield.TextInputLayout>
 
-				<com.google.android.material.textfield.TextInputLayout
-					android:id="@+id/creditInputLayout"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:hint="@string/create_credit_label"
-					android:importantForAccessibility="no"
-					android:layout_marginBottom="@dimen/controlSpacing">
-
-					<com.google.android.material.textfield.TextInputEditText
-						android:id="@+id/creditInput"
+					<TextView
+						android:id="@+id/tableMinimumLabel"
 						android:layout_width="match_parent"
 						android:layout_height="wrap_content"
-						android:contentDescription="@string/create_credit_label"
-						android:inputType="textCapSentences"
-						android:imeOptions="actionDone" />
-				</com.google.android.material.textfield.TextInputLayout>
+						android:text="@string/create_table_minimum_label"
+						android:labelFor="@id/tableMinimumInput"
+						android:importantForAccessibility="no"
+						android:textAppearance="@style/TextAppearance.OhCraps.SectionHeading"
+						android:layout_marginBottom="4dp" />
+
+					<com.google.android.material.textfield.TextInputLayout
+						android:id="@+id/tableMinimumInputLayout"
+						style="@style/Widget.OhCraps.FormField"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:hint="@string/create_table_minimum_label"
+						android:importantForAccessibility="no">
+
+						<com.google.android.material.textfield.TextInputEditText
+							android:id="@+id/tableMinimumInput"
+							android:layout_width="match_parent"
+							android:layout_height="wrap_content"
+							android:contentDescription="@string/create_table_minimum_label"
+							android:inputType="text"
+							android:imeOptions="actionNext" />
+					</com.google.android.material.textfield.TextInputLayout>
+				</LinearLayout>
+
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:orientation="vertical"
+					android:background="@drawable/bg_content_zone"
+					android:padding="@dimen/contentZonePadding"
+					android:layout_marginBottom="@dimen/zoneSpacing">
+
+					<TextView
+						android:id="@+id/stepsLabel"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:text="@string/create_steps_label"
+						android:labelFor="@id/stepsInput"
+						android:importantForAccessibility="no"
+						android:textAppearance="@style/TextAppearance.OhCraps.SectionHeading"
+						android:layout_marginBottom="4dp" />
+
+					<com.google.android.material.textfield.TextInputLayout
+						android:id="@+id/stepsInputLayout"
+						style="@style/Widget.OhCraps.FormField"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:hint="@string/create_steps_label"
+						android:importantForAccessibility="no"
+						android:layout_marginBottom="@dimen/controlSpacing">
+
+						<com.google.android.material.textfield.TextInputEditText
+							android:id="@+id/stepsInput"
+							android:layout_width="match_parent"
+							android:layout_height="wrap_content"
+							android:contentDescription="@string/create_steps_label"
+							android:minLines="4"
+							android:gravity="top|start"
+							android:inputType="textMultiLine|textCapSentences"
+							android:imeOptions="actionNext" />
+					</com.google.android.material.textfield.TextInputLayout>
+
+					<TextView
+						android:id="@+id/notesLabel"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:text="@string/create_notes_label"
+						android:labelFor="@id/notesInput"
+						android:importantForAccessibility="no"
+						android:textAppearance="@style/TextAppearance.OhCraps.SectionHeading"
+						android:layout_marginBottom="4dp" />
+
+					<com.google.android.material.textfield.TextInputLayout
+						android:id="@+id/notesInputLayout"
+						style="@style/Widget.OhCraps.FormField"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:hint="@string/create_notes_label"
+						android:importantForAccessibility="no"
+						android:layout_marginBottom="@dimen/controlSpacing">
+
+						<com.google.android.material.textfield.TextInputEditText
+							android:id="@+id/notesInput"
+							android:layout_width="match_parent"
+							android:layout_height="wrap_content"
+							android:contentDescription="@string/create_notes_label"
+							android:minLines="3"
+							android:gravity="top|start"
+							android:inputType="textMultiLine|textCapSentences"
+							android:imeOptions="actionNext" />
+					</com.google.android.material.textfield.TextInputLayout>
+
+					<TextView
+						android:id="@+id/creditLabel"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:text="@string/create_credit_label"
+						android:labelFor="@id/creditInput"
+						android:importantForAccessibility="no"
+						android:textAppearance="@style/TextAppearance.OhCraps.SectionHeading"
+						android:layout_marginBottom="4dp" />
+
+					<com.google.android.material.textfield.TextInputLayout
+						android:id="@+id/creditInputLayout"
+						style="@style/Widget.OhCraps.FormField"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:hint="@string/create_credit_label"
+						android:importantForAccessibility="no">
+
+						<com.google.android.material.textfield.TextInputEditText
+							android:id="@+id/creditInput"
+							android:layout_width="match_parent"
+							android:layout_height="wrap_content"
+							android:contentDescription="@string/create_credit_label"
+							android:inputType="textCapSentences"
+							android:imeOptions="actionDone" />
+					</com.google.android.material.textfield.TextInputLayout>
+				</LinearLayout>
 
 				<LinearLayout
 					android:id="@+id/createButtonsRow"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:orientation="horizontal"
-					android:layout_marginTop="@dimen/controlSpacing">
+					android:background="@drawable/bg_content_zone"
+					android:padding="@dimen/contentZonePadding">
 
 					<com.google.android.material.button.MaterialButton
 						android:id="@+id/primaryActionButton"
-						style="@style/Widget.Material3.Button.OutlinedButton"
+						style="@style/Widget.OhCraps.FeltActionButton"
 						android:layout_width="0dp"
-						android:layout_height="wrap_content"
+						android:layout_height="@dimen/detailActionMinHeight"
 						android:layout_weight="1"
 						android:text="@string/create_save_strategy" />
 
 					<com.google.android.material.button.MaterialButton
 						android:id="@+id/secondaryActionButton"
-						style="@style/Widget.Material3.Button.OutlinedButton"
+						style="@style/Widget.OhCraps.FeltActionButton"
 						android:layout_width="0dp"
-						android:layout_height="wrap_content"
+						android:layout_height="@dimen/detailActionMinHeight"
 						android:layout_weight="1"
 						android:layout_marginStart="@dimen/controlSpacing"
 						android:text="@string/create_reset_form" />
@@ -266,7 +289,9 @@
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
 			android:orientation="vertical"
-			android:visibility="gone">
+			android:visibility="gone"
+			android:background="@drawable/bg_content_zone"
+			android:padding="@dimen/contentZonePadding">
 
 			<TextView
 				android:id="@+id/emptyMyStrategiesText"

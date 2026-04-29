@@ -2,6 +2,7 @@
 <resources>
 
 	<style name="TextAppearance.OhCraps.ScreenTitle" parent="TextAppearance.Material3.HeadlineLarge">
+		<item name="fontFamily">serif</item>
 		<item name="android:textColor">@color/accent_gold</item>
 		<item name="android:textStyle">bold</item>
 	</style>
@@ -71,6 +72,32 @@
 		<item name="android:textColorHint">@color/text_secondary</item>
 		<item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.OhCraps.SearchField</item>
 		<item name="endIconTint">@color/accent_gold</item>
+	</style>
+
+	<style name="Widget.OhCraps.FormField" parent="Widget.Material3.TextInputLayout.FilledBox">
+		<item name="boxBackgroundMode">filled</item>
+		<item name="boxBackgroundColor">@color/formFieldFill</item>
+		<item name="boxStrokeColor">@color/formFieldStroke</item>
+		<item name="hintTextColor">@color/text_secondary</item>
+		<item name="android:textColorHint">@color/text_secondary</item>
+		<item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.OhCraps.SearchField</item>
+	</style>
+
+	<style name="Widget.OhCraps.ModeButton" parent="Widget.Material3.Button">
+		<item name="android:background">@drawable/bg_mode_button</item>
+		<item name="android:textColor">@color/text_primary</item>
+		<item name="android:textAllCaps">false</item>
+		<item name="android:minHeight">@dimen/detailActionMinHeight</item>
+		<item name="android:paddingStart">@dimen/detailActionPaddingHorizontal</item>
+		<item name="android:paddingTop">@dimen/detailActionPaddingVertical</item>
+		<item name="android:paddingEnd">@dimen/detailActionPaddingHorizontal</item>
+		<item name="android:paddingBottom">@dimen/detailActionPaddingVertical</item>
+		<item name="cornerRadius">14dp</item>
+		<item name="strokeWidth">0dp</item>
+		<item name="backgroundTint">@android:color/transparent</item>
+		<item name="rippleColor">@android:color/transparent</item>
+		<item name="android:insetTop">0dp</item>
+		<item name="android:insetBottom">0dp</item>
 	</style>
 
 	<style name="ShapeAppearanceOverlay.OhCraps.SearchField" parent="">

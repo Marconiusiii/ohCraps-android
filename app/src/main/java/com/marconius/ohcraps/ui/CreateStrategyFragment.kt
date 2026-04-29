@@ -7,6 +7,7 @@ import android.view.accessibility.AccessibilityEvent
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.core.view.AccessibilityDelegateCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
@@ -259,6 +260,18 @@ class CreateStrategyFragment : Fragment(R.layout.fragment_create_strategy) {
 
 		createModeButton.isSelected = createSelected
 		myStrategiesModeButton.isSelected = mySelected
+		createModeButton.setTextColor(
+			ContextCompat.getColor(
+				requireContext(),
+				if (createSelected) R.color.modeButtonSelectedText else R.color.text_primary
+			)
+		)
+		myStrategiesModeButton.setTextColor(
+			ContextCompat.getColor(
+				requireContext(),
+				if (mySelected) R.color.modeButtonSelectedText else R.color.text_primary
+			)
+		)
 
 		createModeButton.isClickable = !createSelected
 		myStrategiesModeButton.isClickable = !mySelected
