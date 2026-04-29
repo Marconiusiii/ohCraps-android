@@ -19,50 +19,58 @@
 		android:accessibilityHeading="true"
 		android:layout_marginBottom="@dimen/controlSpacing" />
 
-	<com.google.android.material.textfield.TextInputLayout
-		android:id="@+id/searchInputLayout"
-		style="@style/Widget.OhCraps.SearchField"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:hint="@string/search_hint"
-		app:endIconMode="clear_text"
-		app:endIconContentDescription="@string/search_clear_button"
-		android:layout_marginBottom="@dimen/controlSpacing">
-
-		<com.google.android.material.textfield.TextInputEditText
-			android:id="@+id/searchInput"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:importantForAutofill="no"
-			android:inputType="text"
-			android:imeOptions="actionSearch"
-			android:textColor="@color/text_primary"
-			android:textColorHint="@color/text_secondary"
-			android:contentDescription="@string/search_accessibility_label" />
-	</com.google.android.material.textfield.TextInputLayout>
-
 	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:orientation="horizontal"
-		android:layout_marginBottom="@dimen/controlSpacing">
+		android:orientation="vertical"
+		android:background="@drawable/bg_content_zone"
+		android:padding="@dimen/contentZonePadding"
+		android:layout_marginBottom="@dimen/zoneSpacing">
 
-		<com.google.android.material.button.MaterialButton
-			android:id="@+id/tableFilterButton"
-			style="@style/Widget.OhCraps.FeltActionButton"
-			android:layout_width="0dp"
-			android:layout_height="@dimen/detailActionMinHeight"
-			android:layout_weight="1"
-			android:text="@string/filter_table_default"
-			android:layout_marginEnd="@dimen/controlSpacing" />
+		<com.google.android.material.textfield.TextInputLayout
+			android:id="@+id/searchInputLayout"
+			style="@style/Widget.OhCraps.SearchField"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="@string/search_hint"
+			app:endIconMode="clear_text"
+			app:endIconContentDescription="@string/search_clear_button"
+			android:layout_marginBottom="@dimen/controlSpacing">
 
-		<com.google.android.material.button.MaterialButton
-			android:id="@+id/buyInFilterButton"
-			style="@style/Widget.OhCraps.FeltActionButton"
-			android:layout_width="0dp"
-			android:layout_height="@dimen/detailActionMinHeight"
-			android:layout_weight="1"
-			android:text="@string/filter_buy_in_default" />
+			<com.google.android.material.textfield.TextInputEditText
+				android:id="@+id/searchInput"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:importantForAutofill="no"
+				android:inputType="text"
+				android:imeOptions="actionSearch"
+				android:textColor="@color/text_primary"
+				android:textColorHint="@color/text_secondary"
+				android:contentDescription="@string/search_accessibility_label" />
+		</com.google.android.material.textfield.TextInputLayout>
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal">
+
+			<com.google.android.material.button.MaterialButton
+				android:id="@+id/tableFilterButton"
+				style="@style/Widget.OhCraps.FeltActionButton"
+				android:layout_width="0dp"
+				android:layout_height="@dimen/detailActionMinHeight"
+				android:layout_weight="1"
+				android:text="@string/filter_table_default"
+				android:layout_marginEnd="@dimen/controlSpacing" />
+
+			<com.google.android.material.button.MaterialButton
+				android:id="@+id/buyInFilterButton"
+				style="@style/Widget.OhCraps.FeltActionButton"
+				android:layout_width="0dp"
+				android:layout_height="@dimen/detailActionMinHeight"
+				android:layout_weight="1"
+				android:text="@string/filter_buy_in_default" />
+		</LinearLayout>
 	</LinearLayout>
 
 	<TextView
@@ -72,7 +80,9 @@
 		android:text="@string/no_strategies_found"
 		android:textAppearance="@style/TextAppearance.OhCraps.Body"
 		android:visibility="gone"
-		android:layout_marginBottom="@dimen/controlSpacing" />
+		android:layout_marginBottom="@dimen/controlSpacing"
+		android:background="@drawable/bg_content_zone"
+		android:padding="@dimen/contentZonePadding" />
 
 	<TextView
 		android:id="@+id/searchAnnouncementView"
@@ -88,8 +98,12 @@
 		android:layout_width="match_parent"
 		android:layout_height="0dp"
 		android:layout_weight="1"
+		android:background="@drawable/bg_content_zone"
 		android:clipToPadding="false"
-		android:paddingBottom="@dimen/screenPadding"
+		android:paddingLeft="@dimen/contentZonePadding"
+		android:paddingTop="@dimen/contentZonePadding"
+		android:paddingRight="@dimen/contentZonePadding"
+		android:paddingBottom="@dimen/contentZonePadding"
 		android:importantForAccessibility="yes" />
 
 </LinearLayout>

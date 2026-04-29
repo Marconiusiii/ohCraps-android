@@ -4,7 +4,8 @@
 	android:id="@+id/sectionHeading"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
-	android:paddingTop="@dimen/sectionSpacing"
-	android:paddingBottom="@dimen/controlSpacing"
+	android:paddingTop="@dimen/listSectionHeadingPaddingTop"
+	android:paddingBottom="@dimen/listSectionHeadingPaddingBottom"
+	android:textColor="@color/contentZoneStroke"
 	android:textAppearance="@style/TextAppearance.OhCraps.SectionHeading"
 	android:accessibilityHeading="true" />

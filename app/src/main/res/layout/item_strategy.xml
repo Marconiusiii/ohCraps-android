@@ -11,6 +11,6 @@
 	android:paddingEnd="@dimen/listItemPaddingHorizontal"
 	android:textAppearance="@style/TextAppearance.OhCraps.Body"
 	android:background="@drawable/bg_strategy_list_item"
-	android:layout_marginBottom="@dimen/controlSpacing"
+	android:layout_marginBottom="@dimen/listRowSpacing"
 	android:clickable="true"
 	android:focusable="true" />

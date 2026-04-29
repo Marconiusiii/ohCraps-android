@@ -15,4 +15,7 @@
 	<dimen name="strategyRowMinHeight">48dp</dimen>
 	<dimen name="contentZonePadding">14dp</dimen>
 	<dimen name="zoneSpacing">12dp</dimen>
+	<dimen name="listRowSpacing">10dp</dimen>
+	<dimen name="listSectionHeadingPaddingTop">16dp</dimen>
+	<dimen name="listSectionHeadingPaddingBottom">10dp</dimen>
 </resources>
