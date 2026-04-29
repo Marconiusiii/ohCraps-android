@@ -18,4 +18,7 @@
 	<dimen name="listRowSpacing">10dp</dimen>
 	<dimen name="listSectionHeadingPaddingTop">16dp</dimen>
 	<dimen name="listSectionHeadingPaddingBottom">10dp</dimen>
+	<dimen name="ruleSectionContentTopSpacing">10dp</dimen>
+	<dimen name="ruleSubSectionSpacingTop">14dp</dimen>
+	<dimen name="bodyLineSpacingExtra">4dp</dimen>
 </resources>

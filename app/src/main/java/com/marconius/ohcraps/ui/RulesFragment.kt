@@ -39,9 +39,16 @@ class RulesFragment : Fragment(R.layout.fragment_rules) {
 				ViewGroup.LayoutParams.MATCH_PARENT,
 				ViewGroup.LayoutParams.WRAP_CONTENT
 			).apply {
-				bottomMargin = resources.getDimensionPixelSize(R.dimen.sectionSpacing)
+				bottomMargin = resources.getDimensionPixelSize(R.dimen.zoneSpacing)
 			}
 			orientation = LinearLayout.VERTICAL
+			background = ContextCompat.getDrawable(requireContext(), R.drawable.bg_rules_section)
+			setPadding(
+				resources.getDimensionPixelSize(R.dimen.contentZonePadding),
+				resources.getDimensionPixelSize(R.dimen.contentZonePadding),
+				resources.getDimensionPixelSize(R.dimen.contentZonePadding),
+				resources.getDimensionPixelSize(R.dimen.contentZonePadding)
+			)
 		}
 
 		val toggleButton = MaterialButton(
@@ -64,7 +71,7 @@ class RulesFragment : Fragment(R.layout.fragment_rules) {
 				ViewGroup.LayoutParams.MATCH_PARENT,
 				ViewGroup.LayoutParams.WRAP_CONTENT
 			).apply {
-				topMargin = resources.getDimensionPixelSize(R.dimen.controlSpacing)
+				topMargin = resources.getDimensionPixelSize(R.dimen.ruleSectionContentTopSpacing)
 			}
 			orientation = LinearLayout.VERTICAL
 		}
@@ -145,6 +152,7 @@ class RulesFragment : Fragment(R.layout.fragment_rules) {
 			}
 			setTextAppearance(R.style.TextAppearance_OhCraps_Body)
 			setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
+			setLineSpacing(resources.getDimension(R.dimen.bodyLineSpacingExtra), 1.0f)
 			this.text = text
 		}
 	}
@@ -159,6 +167,7 @@ class RulesFragment : Fragment(R.layout.fragment_rules) {
 			}
 			setTextAppearance(R.style.TextAppearance_OhCraps_Body)
 			setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
+			setLineSpacing(resources.getDimension(R.dimen.bodyLineSpacingExtra), 1.0f)
 			setPadding(resources.getDimensionPixelSize(R.dimen.screenPadding), 0, 0, 0)
 			this.text = getString(R.string.bullet_line, text)
 		}
@@ -170,11 +179,11 @@ class RulesFragment : Fragment(R.layout.fragment_rules) {
 				ViewGroup.LayoutParams.MATCH_PARENT,
 				ViewGroup.LayoutParams.WRAP_CONTENT
 			).apply {
-				topMargin = resources.getDimensionPixelSize(R.dimen.controlSpacing)
+				topMargin = resources.getDimensionPixelSize(R.dimen.ruleSubSectionSpacingTop)
 				bottomMargin = resources.getDimensionPixelSize(R.dimen.controlSpacing)
 			}
 			setTextAppearance(R.style.TextAppearance_OhCraps_SectionHeading)
-			setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
+			setTextColor(ContextCompat.getColor(requireContext(), R.color.contentZoneStroke))
 			this.text = text
 			ViewCompat.setAccessibilityHeading(this, true)
 		}
