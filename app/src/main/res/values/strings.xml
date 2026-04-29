@@ -118,6 +118,9 @@
 	<string name="notes_heading">Notes</string>
 	<string name="credit_heading">Credit</string>
 	<string name="steps_heading">Steps</string>
+	<string name="personal_notes_heading">Personal Notes</string>
+	<string name="personal_notes_label">Personal Notes</string>
+	<string name="personal_notes_helper">Your own notes for this strategy. These save automatically and are not public.</string>
 	<string name="strategy_not_found">Strategy not found</string>
 	<string name="unknown_value">Unknown</string>
 	<string name="kv_buy_in">Buy-in: %1$s</string>

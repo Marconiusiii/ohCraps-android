@@ -16,10 +16,12 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.AccessibilityDelegateCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.textfield.TextInputEditText
 import com.marconius.ohcraps.R
 import com.marconius.ohcraps.strategies.Strategy
 import com.marconius.ohcraps.strategies.StrategyContentBlock
@@ -46,6 +48,7 @@ class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 	private lateinit var creditSection: LinearLayout
 	private lateinit var creditText: TextView
 	private lateinit var stepsContainer: LinearLayout
+	private lateinit var personalNotesInput: TextInputEditText
 
 	private var strategyIdForFocus: String = ""
 	private var focusKeyForBackNavigation: String = StrategiesFragment.focusStrategyIdKey
@@ -55,6 +58,7 @@ class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 	private var displayedStrategy: Strategy? = null
 	private var pendingDetailSubmitStrategyId: String? = null
 	private var isFavoriteSelected: Boolean = false
+	private var isUpdatingPersonalNotesField: Boolean = false
 
 	private val emailLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
 		val strategyId = pendingDetailSubmitStrategyId ?: return@registerForActivityResult
@@ -95,6 +99,20 @@ class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 		creditSection = rootView.findViewById(R.id.creditSection)
 		creditText = rootView.findViewById(R.id.creditText)
 		stepsContainer = rootView.findViewById(R.id.stepsContainer)
+		personalNotesInput = rootView.findViewById(R.id.personalNotesInput)
+		personalNotesInput.doAfterTextChanged { editable ->
+			if (isUpdatingPersonalNotesField) {
+				return@doAfterTextChanged
+			}
+			val storageId = resolvePersonalNotesStorageId()
+			if (storageId.isNotEmpty()) {
+				PersonalStrategyNotesStore.save(
+					requireContext(),
+					storageId,
+					editable?.toString().orEmpty()
+				)
+			}
+		}
 	}
 
 	private fun bindBackNavigation() {
@@ -242,6 +260,28 @@ class StrategyDetailFragment : Fragment(R.layout.fragment_strategy_detail) {
 		}
 
 		renderSteps(strategy.contentBlocks)
+		loadPersonalNotes()
+	}
+
+	private fun resolvePersonalNotesStorageId(): String {
+		return when {
+			userStrategyId.isNotEmpty() -> "user:$userStrategyId"
+			strategyIdForFocus.isNotEmpty() -> "core:$strategyIdForFocus"
+			else -> ""
+		}
+	}
+
+	private fun loadPersonalNotes() {
+		val storageId = resolvePersonalNotesStorageId()
+		isUpdatingPersonalNotesField = true
+		personalNotesInput.setText(
+			if (storageId.isEmpty()) {
+				""
+			} else {
+				PersonalStrategyNotesStore.load(requireContext(), storageId)
+			}
+		)
+		isUpdatingPersonalNotesField = false
 	}
 
 	private fun updateSubmissionStatusText() {
