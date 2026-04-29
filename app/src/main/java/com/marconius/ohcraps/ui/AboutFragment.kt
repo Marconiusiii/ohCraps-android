@@ -34,36 +34,76 @@ class AboutFragment : Fragment(R.layout.fragment_about) {
 	private fun renderAboutContent() {
 		contentContainer.removeAllViews()
 
-		for (paragraph in aboutIntroParagraphs) {
-			contentContainer.addView(createParagraphView(paragraph))
-		}
+		contentContainer.addView(
+			createZoneContainer().apply {
+				for (paragraph in aboutIntroParagraphs) {
+					addView(createParagraphView(paragraph))
+				}
 
-		if ((activity as? MainActivity)?.isWhatsNewAvailable() == true) {
-			contentContainer.addView(createWhatsNewButton())
-		}
-		contentContainer.addView(createHeadingView(getString(R.string.about_references_heading)))
-		contentContainer.addView(createParagraphView(aboutReferenceIntro))
-		addLinkTextViews(aboutReferenceLinks)
+				if ((activity as? MainActivity)?.isWhatsNewAvailable() == true) {
+					addView(createWhatsNewButton())
+				}
+			}
+		)
 
-		contentContainer.addView(createHeadingView(getString(R.string.about_credits_heading)))
-		for (paragraph in aboutCreditsParagraphs) {
-			contentContainer.addView(createParagraphView(paragraph))
-		}
-		addLinkTextViews(aboutCreditsLinks)
+		contentContainer.addView(
+			createZoneContainer().apply {
+				addView(createHeadingView(getString(R.string.about_references_heading)))
+				addView(createParagraphView(aboutReferenceIntro))
+				addLinkTextViews(this, aboutReferenceLinks)
+			}
+		)
 
-		contentContainer.addView(createHeadingView(getString(R.string.about_responsible_heading)))
-		for (paragraph in aboutResponsibleGamblingParagraphs) {
-			contentContainer.addView(createParagraphView(paragraph))
-		}
-		addLinkTextViews(aboutResponsibleGamblingLinks)
+		contentContainer.addView(
+			createZoneContainer().apply {
+				addView(createHeadingView(getString(R.string.about_credits_heading)))
+				for (paragraph in aboutCreditsParagraphs) {
+					addView(createParagraphView(paragraph))
+				}
+				addLinkTextViews(this, aboutCreditsLinks)
+			}
+		)
 
-		contentContainer.addView(createFeedbackButton())
-		contentContainer.addView(createFooterView())
+		contentContainer.addView(
+			createZoneContainer().apply {
+				addView(createHeadingView(getString(R.string.about_responsible_heading)))
+				for (paragraph in aboutResponsibleGamblingParagraphs) {
+					addView(createParagraphView(paragraph))
+				}
+				addLinkTextViews(this, aboutResponsibleGamblingLinks)
+			}
+		)
+
+		contentContainer.addView(
+			createZoneContainer().apply {
+				addView(createFeedbackButton())
+				addView(createFooterView())
+			}
+		)
 	}
 
-	private fun addLinkTextViews(links: List<AboutLink>) {
+	private fun addLinkTextViews(container: LinearLayout, links: List<AboutLink>) {
 		for (link in links) {
-			contentContainer.addView(createExternalLinkTextView(link))
+			container.addView(createExternalLinkTextView(link))
+		}
+	}
+
+	private fun createZoneContainer(): LinearLayout {
+		return LinearLayout(requireContext()).apply {
+			layoutParams = LinearLayout.LayoutParams(
+				ViewGroup.LayoutParams.MATCH_PARENT,
+				ViewGroup.LayoutParams.WRAP_CONTENT
+			).apply {
+				bottomMargin = resources.getDimensionPixelSize(R.dimen.zoneSpacing)
+			}
+			orientation = LinearLayout.VERTICAL
+			background = ContextCompat.getDrawable(requireContext(), R.drawable.bg_rules_section)
+			setPadding(
+				resources.getDimensionPixelSize(R.dimen.contentZonePadding),
+				resources.getDimensionPixelSize(R.dimen.contentZonePadding),
+				resources.getDimensionPixelSize(R.dimen.contentZonePadding),
+				resources.getDimensionPixelSize(R.dimen.contentZonePadding)
+			)
 		}
 	}
 
@@ -77,7 +117,7 @@ class AboutFragment : Fragment(R.layout.fragment_about) {
 				bottomMargin = resources.getDimensionPixelSize(R.dimen.controlSpacing)
 			}
 			setTextAppearance(R.style.TextAppearance_OhCraps_SectionHeading)
-			setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
+			setTextColor(ContextCompat.getColor(requireContext(), R.color.contentZoneStroke))
 			this.text = text
 			ViewCompat.setAccessibilityHeading(this, true)
 		}
@@ -93,6 +133,7 @@ class AboutFragment : Fragment(R.layout.fragment_about) {
 			}
 			setTextAppearance(R.style.TextAppearance_OhCraps_Body)
 			setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
+			setLineSpacing(resources.getDimension(R.dimen.bodyLineSpacingExtra), 1.0f)
 			this.text = text
 		}
 	}
@@ -106,9 +147,9 @@ class AboutFragment : Fragment(R.layout.fragment_about) {
 				bottomMargin = resources.getDimensionPixelSize(R.dimen.controlSpacing)
 			}
 			setTextAppearance(R.style.TextAppearance_OhCraps_Body)
-			setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
+			setTextColor(ContextCompat.getColor(requireContext(), R.color.contentZoneStroke))
 			paintFlags = paintFlags or android.graphics.Paint.UNDERLINE_TEXT_FLAG
-			setLinkTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
+			setLinkTextColor(ContextCompat.getColor(requireContext(), R.color.contentZoneStroke))
 			movementMethod = LinkMovementMethod.getInstance()
 
 			val linkedText = SpannableString(link.title).apply {
@@ -128,7 +169,7 @@ class AboutFragment : Fragment(R.layout.fragment_about) {
 				ViewGroup.LayoutParams.WRAP_CONTENT,
 				ViewGroup.LayoutParams.WRAP_CONTENT
 			).apply {
-				topMargin = resources.getDimensionPixelSize(R.dimen.sectionSpacing)
+				topMargin = resources.getDimensionPixelSize(R.dimen.controlSpacing)
 			}
 			text = getString(R.string.about_feedback_button)
 			isAllCaps = false
