@@ -6,14 +6,13 @@ data class AboutLink(
 )
 
 val aboutIntroParagraphs: List<String> = listOf(
-	"Oh Craps! is a collection of Craps strategies I've collected and compiled in one accessible app. Use these when playing my Oh Craps Python game or when you are out and about at a real casino!",
-	"Whenever a new strategy is put up on my main Oh Craps website, this app will be updated. Use the Create Strategy tab to write up and save your own strategies locally to your phone. You can then submit them so everyone who uses this app can check out your strategy!",
-	"Remember, none of these are guaranteed to make you a winner, as you can never predict how the dice will roll in any given session.",
-	"This app has been built with a Blind-first accessibility and usability methodology, and supports all assistive technologies on Android."
+	"Oh Craps! brings together my accessible collection of Craps strategies for quick reference at home or at the table.",
+	"The app updates whenever new strategies are added to the main Oh Craps site, and the Create Strategy tab lets you write, save, and submit your own strategies from your phone.",
+	"This app is built with a Blind-first accessibility approach, and supports all assistive technologies on Android."
 )
 
 val aboutReferenceIntro =
-	"These YouTube channels and sites inspired me to learn more about Craps overall and have videos showing most of these strategies in action."
+	"These YouTube channels and sites inspired me to learn more about Craps overall and have videos showing most of the strategies in action."
 
 val aboutReferenceLinks: List<AboutLink> = listOf(
 	AboutLink("Color Up on YouTube", "https://www.youtube.com/channel/UCPZ2kcfmtAhnf_RVc9fZzNA"),
