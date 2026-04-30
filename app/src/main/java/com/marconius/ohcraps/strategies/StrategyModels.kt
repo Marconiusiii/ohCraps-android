@@ -43,7 +43,7 @@ sealed class SectionKey : Comparable<SectionKey> {
 	val displayLabel: String
 		get() = when (this) {
 			Favorites -> "Favorites"
-			Number -> "#"
+			Number -> "Numbers"
 			is Letter -> value.toString()
 		}
 
