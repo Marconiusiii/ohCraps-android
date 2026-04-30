@@ -47,6 +47,22 @@
 		<item name="android:insetBottom">0dp</item>
 	</style>
 
+	<style name="Widget.OhCraps.ShareDetailButton" parent="Widget.Material3.Button">
+		<item name="android:background">@drawable/bg_detail_share_primary</item>
+		<item name="android:textColor">@color/detailShareText</item>
+		<item name="android:textAllCaps">false</item>
+		<item name="android:paddingStart">@dimen/detailActionPaddingHorizontal</item>
+		<item name="android:paddingTop">@dimen/detailActionPaddingVertical</item>
+		<item name="android:paddingEnd">@dimen/detailActionPaddingHorizontal</item>
+		<item name="android:paddingBottom">@dimen/detailActionPaddingVertical</item>
+		<item name="cornerRadius">14dp</item>
+		<item name="strokeWidth">0dp</item>
+		<item name="backgroundTint">@android:color/transparent</item>
+		<item name="rippleColor">@android:color/transparent</item>
+		<item name="android:insetTop">0dp</item>
+		<item name="android:insetBottom">0dp</item>
+	</style>
+
 	<style name="Widget.OhCraps.FeltActionButton" parent="Widget.Material3.Button">
 		<item name="android:background">@drawable/bg_detail_share_action</item>
 		<item name="android:textColor">@color/text_primary</item>

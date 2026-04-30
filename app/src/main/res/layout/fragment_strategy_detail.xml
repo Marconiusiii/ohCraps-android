@@ -44,6 +44,7 @@
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
 			android:layout_weight="1"
+			android:layout_marginEnd="@dimen/controlSpacing"
 			android:minHeight="@dimen/detailActionMinHeight"
 			android:paddingStart="@dimen/detailActionPaddingHorizontal"
 			android:paddingTop="@dimen/detailActionPaddingVertical"
@@ -51,7 +52,7 @@
 			android:paddingBottom="@dimen/detailActionPaddingVertical"
 			android:background="@drawable/bg_detail_favorite_action"
 			android:orientation="horizontal"
-			android:gravity="center_vertical"
+			android:gravity="center"
 			android:clickable="true"
 			android:focusable="true"
 			android:importantForAccessibility="yes"
@@ -77,10 +78,10 @@
 
 		<com.google.android.material.button.MaterialButton
 			android:id="@+id/shareButton"
-			style="@style/Widget.OhCraps.DetailActionButton"
-			android:layout_width="wrap_content"
+			style="@style/Widget.OhCraps.ShareDetailButton"
+			android:layout_width="0dp"
 			android:layout_height="@dimen/detailActionMinHeight"
-			android:layout_marginStart="@dimen/controlSpacing"
+			android:layout_weight="1"
 			android:text="@string/share_strategy_button"
 			android:contentDescription="@string/share_strategy_button"
 			android:visibility="gone" />
@@ -201,24 +202,6 @@
 					android:accessibilityHeading="true"
 					android:layout_marginBottom="@dimen/controlSpacing" />
 
-				<TextView
-					android:id="@+id/personalNotesLabel"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:text="@string/personal_notes_label"
-					android:labelFor="@id/personalNotesInput"
-					android:importantForAccessibility="no"
-					android:textAppearance="@style/TextAppearance.OhCraps.Body"
-					android:layout_marginBottom="4dp" />
-
-				<TextView
-					android:id="@+id/personalNotesHelper"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:text="@string/personal_notes_helper"
-					android:textAppearance="@style/TextAppearance.OhCraps.ListItem"
-					android:layout_marginBottom="@dimen/controlSpacing" />
-
 				<com.google.android.material.textfield.TextInputLayout
 					android:id="@+id/personalNotesInputLayout"
 					style="@style/Widget.OhCraps.FormField"
@@ -236,6 +219,14 @@
 						android:gravity="top|start"
 						android:inputType="textMultiLine|textCapSentences" />
 				</com.google.android.material.textfield.TextInputLayout>
+
+				<TextView
+					android:id="@+id/personalNotesHelper"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:text="@string/personal_notes_helper"
+					android:textAppearance="@style/TextAppearance.OhCraps.ListItem"
+					android:layout_marginTop="@dimen/controlSpacing" />
 			</LinearLayout>
 
 		</LinearLayout>

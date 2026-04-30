@@ -38,6 +38,12 @@
 	<color name="detailActionFocusFill">#1A4B3B</color>
 	<color name="detailActionPressedFill">#1E5744</color>
 	<color name="detailActionStroke">#C8A35A</color>
+	<color name="detailShareFill">#0E2B22</color>
+	<color name="detailShareFocusFill">#15392D</color>
+	<color name="detailSharePressedFill">#1A4637</color>
+	<color name="detailShareOuterStroke">#EFE6CC</color>
+	<color name="detailShareInnerStroke">#20160D</color>
+	<color name="detailShareText">#F4D98A</color>
 	<color name="detailFavoriteSelectedFill">#3E3514</color>
 	<color name="detailFavoriteFocusFill">#4A3F17</color>
 	<color name="detailFavoritePressedFill">#56491B</color>
