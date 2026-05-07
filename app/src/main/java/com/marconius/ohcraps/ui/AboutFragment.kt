@@ -7,6 +7,7 @@ import android.text.SpannableString
 import android.text.Spanned
 import android.text.method.LinkMovementMethod
 import android.text.style.URLSpan
+import android.text.util.Linkify
 import android.view.ContextThemeWrapper
 import android.view.View
 import android.view.ViewGroup
@@ -77,6 +78,7 @@ class AboutFragment : Fragment(R.layout.fragment_about) {
 		contentContainer.addView(
 			createZoneContainer().apply {
 				addView(createFeedbackButton())
+				addView(createPrivacyPolicyLinkTextView())
 				addView(createFooterView())
 			}
 		)
@@ -179,6 +181,24 @@ class AboutFragment : Fragment(R.layout.fragment_about) {
 		}
 	}
 
+	private fun createPrivacyPolicyLinkTextView(): TextView {
+		return TextView(requireContext()).apply {
+			layoutParams = LinearLayout.LayoutParams(
+				ViewGroup.LayoutParams.WRAP_CONTENT,
+				ViewGroup.LayoutParams.WRAP_CONTENT
+			).apply {
+				topMargin = resources.getDimensionPixelSize(R.dimen.controlSpacing)
+			}
+			setTextAppearance(R.style.TextAppearance_OhCraps_Body)
+			setTextColor(ContextCompat.getColor(requireContext(), R.color.contentZoneStroke))
+			paintFlags = paintFlags or android.graphics.Paint.UNDERLINE_TEXT_FLAG
+			setLinkTextColor(ContextCompat.getColor(requireContext(), R.color.contentZoneStroke))
+			movementMethod = LinkMovementMethod.getInstance()
+			text = getString(R.string.about_privacy_policy_label)
+			Linkify.addLinks(this, java.util.regex.Pattern.compile("Privacy Policy"), privacyPolicyUrl)
+		}
+	}
+
 	private fun createWhatsNewButton(): MaterialButton {
 		return MaterialButton(
 			ContextThemeWrapper(requireContext(), R.style.Widget_OhCraps_FeltActionButton),
@@ -253,5 +273,6 @@ class AboutFragment : Fragment(R.layout.fragment_about) {
 
 	private companion object {
 		const val feedbackRecipient = "marco@marconius.com"
+		const val privacyPolicyUrl = "https://marconius.com/craps/privacy/"
 	}
 }
