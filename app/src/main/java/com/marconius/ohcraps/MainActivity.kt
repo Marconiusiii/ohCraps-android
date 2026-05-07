@@ -2,6 +2,8 @@ package com.marconius.ohcraps
 
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
@@ -11,6 +13,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.navOptions
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.R as MaterialR
 
 class MainActivity : AppCompatActivity() {
 	private lateinit var bottomNav: BottomNavigationView
@@ -28,9 +31,14 @@ class MainActivity : AppCompatActivity() {
 		bottomNav = findViewById(R.id.bottomNav)
 		bottomNav.setItemActiveIndicatorEnabled(false)
 		bottomNav.itemIconTintList = null
+		bottomNav.itemPaddingTop = 0
+		bottomNav.itemPaddingBottom = 0
 		bottomNav.itemTextAppearanceActive = R.style.TextAppearance_OhCraps_BottomNav
 		bottomNav.itemTextAppearanceInactive = R.style.TextAppearance_OhCraps_BottomNav
 		bottomNav.setupWithNavController(navController)
+		bottomNav.post {
+			centerBottomNavLabels()
+		}
 		applyWindowInsets()
 
 		navController.addOnDestinationChangedListener { _, destination, _ ->
@@ -76,6 +84,34 @@ class MainActivity : AppCompatActivity() {
 			windowInsets
 		}
 		ViewCompat.requestApplyInsets(rootView)
+	}
+
+	private fun centerBottomNavLabels() {
+		val menuView = bottomNav.getChildAt(0) as? ViewGroup ?: return
+		for (index in 0 until menuView.childCount) {
+			val itemView = menuView.getChildAt(index) as? ViewGroup ?: continue
+			val iconContainer = itemView.findViewById<View>(MaterialR.id.navigation_bar_item_icon_container)
+			val labelsGroup = itemView.findViewById<View>(MaterialR.id.navigation_bar_item_labels_group)
+			val smallLabel = itemView.findViewById<View>(MaterialR.id.navigation_bar_item_small_label_view)
+			val largeLabel = itemView.findViewById<View>(MaterialR.id.navigation_bar_item_large_label_view)
+
+			iconContainer?.visibility = View.GONE
+
+			val labelsLayoutParams = labelsGroup?.layoutParams as? FrameLayout.LayoutParams
+			labelsLayoutParams?.gravity = android.view.Gravity.CENTER
+			labelsGroup?.layoutParams = labelsLayoutParams
+			labelsGroup?.setPadding(
+				labelsGroup?.paddingLeft ?: 0,
+				0,
+				labelsGroup?.paddingRight ?: 0,
+				0
+			)
+
+			smallLabel?.pivotX = 0f
+			smallLabel?.pivotY = 0f
+			largeLabel?.pivotX = 0f
+			largeLabel?.pivotY = 0f
+		}
 	}
 
 	fun setBottomNavForcedHidden(hidden: Boolean) {
